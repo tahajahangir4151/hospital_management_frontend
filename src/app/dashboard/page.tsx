@@ -176,6 +176,7 @@ export default function DashboardPage() {
         : "Assigned across hospital wards",
       badgeText: "Fully Staffed",
       badgeType: "success" as const,
+      href: "/dashboard/nurses",
       isLoading: isLoadingMetrics,
       icon: (
         <svg

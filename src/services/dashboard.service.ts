@@ -1,6 +1,7 @@
 import { apiClient } from "@/services/api-client";
 import { departmentService } from "@/services/department.service";
 import { doctorService } from "@/services/doctor.service";
+import { nurseService } from "@/services/nurse.service";
 
 export interface DashboardMetrics {
   totalDepartments: number;
@@ -86,7 +87,7 @@ export const dashboardService = {
       apiClient<{ success: boolean; data: unknown[] }>("/api/patients"),
       apiClient<{ success: boolean; data: unknown[] }>("/api/rooms"),
       apiClient<{ success: boolean; data: unknown[] }>("/api/admissions"),
-      apiClient<{ success: boolean; data: unknown[] }>("/api/nurses"),
+      nurseService.getNurses(forceRefresh),
     ]);
 
     const getCount = (

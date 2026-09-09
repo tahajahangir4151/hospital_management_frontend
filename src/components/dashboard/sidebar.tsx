@@ -318,7 +318,12 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
             <nav className="space-y-0.5">
               {section.items.map((item) => {
                 const isActive = pathname === item.href;
-                const implementedRoutes = ["/dashboard", "/dashboard/departments", "/dashboard/doctors"];
+                const implementedRoutes = [
+                  "/dashboard",
+                  "/dashboard/departments",
+                  "/dashboard/doctors",
+                  "/dashboard/nurses",
+                ];
                 const isImplemented = implementedRoutes.includes(item.href);
 
                 return (

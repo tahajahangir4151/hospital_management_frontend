@@ -2,6 +2,7 @@ import { apiClient } from "@/services/api-client";
 import { departmentService } from "@/services/department.service";
 import { dashboardService } from "@/services/dashboard.service";
 import { doctorService } from "@/services/doctor.service";
+import { nurseService } from "@/services/nurse.service";
 import {
   AdminLoginCredentials,
   AdminLoginSuccessResponse,
@@ -97,6 +98,7 @@ export const authService = {
       departmentService.clearCache();
       dashboardService.clearCache();
       doctorService.clearCache();
+      nurseService.clearCache();
     } catch (err) {
       console.error("Failed to clear authentication session:", err);
     }
