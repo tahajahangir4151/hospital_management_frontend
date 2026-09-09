@@ -318,10 +318,14 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
             <nav className="space-y-0.5">
               {section.items.map((item) => {
                 const isActive = pathname === item.href;
+                const implementedRoutes = ["/dashboard", "/dashboard/departments", "/dashboard/doctors"];
+                const isImplemented = implementedRoutes.includes(item.href);
+
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
+                    prefetch={isImplemented}
                     onClick={onCloseMobile}
                     className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                       isActive

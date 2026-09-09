@@ -98,7 +98,6 @@ export default function DashboardPage() {
         : "Registered hospital patients",
       badgeText: "Active Registry",
       badgeType: "neutral" as const,
-      href: "/dashboard/patients",
       isLoading: isLoadingMetrics,
       icon: (
         <svg
@@ -125,7 +124,6 @@ export default function DashboardPage() {
         : "Rooms configured",
       badgeText: metrics && metrics.totalRooms > 0 ? `${metrics.totalRooms} Rooms` : "Available",
       badgeType: "success" as const,
-      href: "/dashboard/rooms",
       isLoading: isLoadingMetrics,
       icon: (
         <svg
@@ -152,7 +150,6 @@ export default function DashboardPage() {
         : "Currently admitted inpatients",
       badgeText: "Ongoing Care",
       badgeType: "info" as const,
-      href: "/dashboard/admissions",
       isLoading: isLoadingMetrics,
       icon: (
         <svg
@@ -179,7 +176,6 @@ export default function DashboardPage() {
         : "Assigned across hospital wards",
       badgeText: "Fully Staffed",
       badgeType: "success" as const,
-      href: "/dashboard/nurses",
       isLoading: isLoadingMetrics,
       icon: (
         <svg

@@ -1,6 +1,7 @@
 import { apiClient } from "@/services/api-client";
 import { departmentService } from "@/services/department.service";
 import { dashboardService } from "@/services/dashboard.service";
+import { doctorService } from "@/services/doctor.service";
 import {
   AdminLoginCredentials,
   AdminLoginSuccessResponse,
@@ -95,6 +96,7 @@ export const authService = {
       document.cookie = "hms_token=; path=/; max-age=0; SameSite=Lax";
       departmentService.clearCache();
       dashboardService.clearCache();
+      doctorService.clearCache();
     } catch (err) {
       console.error("Failed to clear authentication session:", err);
     }

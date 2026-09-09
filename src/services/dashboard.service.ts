@@ -1,5 +1,6 @@
 import { apiClient } from "@/services/api-client";
 import { departmentService } from "@/services/department.service";
+import { doctorService } from "@/services/doctor.service";
 
 export interface DashboardMetrics {
   totalDepartments: number;
@@ -81,7 +82,7 @@ export const dashboardService = {
 
     const results = await Promise.allSettled([
       departmentService.getDepartments(forceRefresh),
-      apiClient<{ success: boolean; data: unknown[] }>("/api/doctors"),
+      doctorService.getDoctors(forceRefresh),
       apiClient<{ success: boolean; data: unknown[] }>("/api/patients"),
       apiClient<{ success: boolean; data: unknown[] }>("/api/rooms"),
       apiClient<{ success: boolean; data: unknown[] }>("/api/admissions"),
