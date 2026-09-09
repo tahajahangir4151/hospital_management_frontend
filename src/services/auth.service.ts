@@ -1,4 +1,6 @@
 import { apiClient } from "@/services/api-client";
+import { departmentService } from "@/services/department.service";
+import { dashboardService } from "@/services/dashboard.service";
 import {
   AdminLoginCredentials,
   AdminLoginSuccessResponse,
@@ -23,7 +25,7 @@ export const authService = {
     });
 
     if (response.success && response.data) {
-      this.saveSession(response.data);
+      authService.saveSession(response.data);
     }
 
     return response;
@@ -56,7 +58,15 @@ export const authService = {
    */
   getStoredToken(): string | null {
     if (typeof window === "undefined") return null;
-    return localStorage.getItem(TOKEN_STORAGE_KEY);
+    const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+    if (token) return token;
+
+    // Fallback check from cookie
+    const match = document.cookie.match(/hms_token=([^;]+)/);
+    if (match && match[1]) {
+      return decodeURIComponent(match[1]);
+    }
+    return null;
   },
 
   /**
@@ -83,6 +93,8 @@ export const authService = {
       localStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY);
       localStorage.removeItem(USER_STORAGE_KEY);
       document.cookie = "hms_token=; path=/; max-age=0; SameSite=Lax";
+      departmentService.clearCache();
+      dashboardService.clearCache();
     } catch (err) {
       console.error("Failed to clear authentication session:", err);
     }

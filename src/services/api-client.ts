@@ -19,8 +19,21 @@ export async function apiClient<T>(
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
 
+  // Automatically attach Bearer token if available
+  let token: string | null = null;
+  if (typeof window !== "undefined") {
+    token = localStorage.getItem("hms_admin_token");
+    if (!token) {
+      const match = document.cookie.match(/hms_token=([^;]+)/);
+      if (match && match[1]) {
+        token = decodeURIComponent(match[1]);
+      }
+    }
+  }
+
   const headers: HeadersInit = {
     "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
 
@@ -40,7 +53,7 @@ export async function apiClient<T>(
 
     if (!response.ok) {
       const errorMessage =
-        (typeof data === "object" && data !== null && "message" in data)
+        typeof data === "object" && data !== null && "message" in data
           ? String((data as { message: unknown }).message)
           : `Request failed with status ${response.status}`;
 
@@ -53,7 +66,9 @@ export async function apiClient<T>(
       throw error;
     }
     throw new ApiError(
-      error instanceof Error ? error.message : "Network error. Please verify the backend server is running.",
+      error instanceof Error
+        ? error.message
+        : "Network error. Please verify the backend server is running.",
       0
     );
   }

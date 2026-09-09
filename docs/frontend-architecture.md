@@ -127,26 +127,37 @@ When new modules are developed, they will be organized modularly inside `src/fea
   - Session persistence (`localStorage` and `hms_token` cookie)
   - Full TypeScript response typing (`AdminLoginResponse`, `AuthUser`, `AuthSession`)
 - Admin Login page (`/` and `/login`) with live validation and authentication
-- Admin Dashboard (`/dashboard`) with:
-  - Navigation header (`src/components/common/dashboard-header.tsx`)
-  - Left branding: Hospital logo, name, system title, and Admin badge
-  - Right section: "Welcome [Name]", user profile avatar icon, and functional Logout button
+- Admin Dashboard UI Shell (`/dashboard`):
+  - Dashboard Layout (`src/app/dashboard/layout.tsx`)
+  - Fixed Sidebar (`src/components/dashboard/sidebar.tsx`) with Overview, Management, and Operations sections
+  - Mobile slide-over drawer navigation with hamburger trigger
+  - Topbar (`src/components/dashboard/topbar.tsx`) with search bar, page title, and administrator profile pill
+  - Reusable Stat Cards (`src/components/dashboard/stat-card.tsx`) for 6 key hospital metrics
+  - Recent Admissions table with status badges (`Active`, `Observation`, `Discharged`)
+  - Room & Bed Overview widget with live capacity progress bars
   - Client session guard (redirects unauthenticated visitors to login)
 - Architecture documentation (`docs/frontend-architecture.md`)
 
 ### Not Implemented Yet (Deferred to Future Steps)
-- Sidebar navigation for CRUD modules
 - Next.js Route Protection middleware
-- CRUD modules (Departments, Doctors, Patients, Nurses, Rooms, Admissions, Treatments, Billing)
-- Backend REST API integration
+- Department CRUD page (`/dashboard/departments`)
+- Doctor CRUD page (`/dashboard/doctors`)
+- Patient CRUD page (`/dashboard/patients`)
+- Nurse CRUD page (`/dashboard/nurses`)
+- Room CRUD page (`/dashboard/rooms`)
+- Admission CRUD page (`/dashboard/admissions`)
+- Treatment CRUD page (`/dashboard/treatments`)
+- Nurse-Room Assignment page (`/dashboard/nurse-assignments`)
+- Billing CRUD page (`/dashboard/billing`)
+- Module REST API integrations
 
 ---
 
 ## 8. Next Recommended Step
 
-**Step 2: Authentication Integration**
-1. Create an API client (`src/services/api-client.ts`) with baseURL and request interceptors for JWT Bearer tokens.
-2. Implement auth service (`src/services/auth.service.ts`) to call `POST /api/auth/login`.
-3. Set up secure session handling (HTTP-only cookies / secure token storage).
+**Step 4: Departments Module Implementation**
+1. Implement the Departments list and CRUD interface under `/dashboard/departments`.
+2. Connect Departments REST API (`GET /api/departments`, `POST`, `PUT`, `DELETE`).
+3. Add search, filter, and pagination.
 4. Integrate the `/login` form with the auth service, handling genuine backend authentication responses, role verification (ensuring user has `admin` role), and redirection.
 5. Create Next.js authentication middleware for route protection.

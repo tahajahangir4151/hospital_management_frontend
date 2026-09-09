@@ -1,14 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { authService } from "@/services/auth.service";
 import { AdminLoginCredentials, LoginFormErrors } from "@/types/auth";
 
 export function AdminLoginForm() {
-  const router = useRouter();
   const [formData, setFormData] = useState<AdminLoginCredentials>({
     email: "",
     password: "",
@@ -19,6 +17,59 @@ export function AdminLoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const executeLogin = useCallback(async (creds: AdminLoginCredentials) => {
+    setIsLoading(true);
+    setErrors({});
+    setSuccessMessage(null);
+
+    try {
+      const response = await authService.loginAdmin(creds);
+
+      if (response.success && response.data) {
+        const adminName = response.data.user.full_name || response.data.user.email;
+        setSuccessMessage(`Login successful! Welcome, ${adminName}. Redirecting...`);
+        setErrors({});
+
+        // Use direct navigation to guarantee clean session initialization
+        window.location.href = "/dashboard";
+      }
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Unable to sign in. Please verify your connection to the server.";
+
+      setErrors({
+        general: message,
+      });
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Clean any query parameters left in the URL bar from previous attempts
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location.search) {
+      const params = new URLSearchParams(window.location.search);
+      const emailParam = params.get("email");
+      const passwordParam = params.get("password");
+
+      // Strip query parameters from URL history immediately
+      window.history.replaceState({}, document.title, window.location.pathname);
+
+      if (emailParam || passwordParam) {
+        const creds: AdminLoginCredentials = {
+          email: emailParam || "",
+          password: passwordParam || "",
+        };
+        setFormData(creds);
+
+        if (creds.email && creds.password) {
+          executeLogin(creds);
+        }
+      }
+    }
+  }, [executeLogin]);
 
   const validateForm = (): boolean => {
     const newErrors: LoginFormErrors = {};
@@ -40,51 +91,33 @@ export function AdminLoginForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const handleChange = (field: keyof AdminLoginCredentials, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
 
-    // Clear error for active field
-    if (errors[name as keyof LoginFormErrors]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined, general: undefined }));
+    if (errors[field as keyof LoginFormErrors]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined, general: undefined }));
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSuccessMessage(null);
+  const handleLogin = async () => {
+    if (isLoading) return;
 
     if (!validateForm()) {
       return;
     }
 
-    setIsLoading(true);
+    await executeLogin(formData);
+  };
 
-    try {
-      const response = await authService.loginAdmin(formData);
-
-      if (response.success && response.data) {
-        const adminName = response.data.user.full_name || response.data.user.email;
-        setSuccessMessage(`Login successful! Welcome, ${adminName}. Redirecting...`);
-        setErrors({});
-        router.push("/dashboard");
-      }
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Unable to sign in. Please verify your connection to the server.";
-
-      setErrors({
-        general: message,
-      });
-    } finally {
-      setIsLoading(false);
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleLogin();
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-4 text-left">
+    <div onKeyDown={handleKeyDown} className="space-y-4 text-left">
       {/* Backend Error Alert */}
       {errors.general && (
         <div
@@ -135,7 +168,6 @@ export function AdminLoginForm() {
       {/* Email Input */}
       <Input
         id="admin-email"
-        name="email"
         type="email"
         label="Admin Email"
         placeholder="admin@gmail.com"
@@ -143,14 +175,13 @@ export function AdminLoginForm() {
         required
         disabled={isLoading}
         value={formData.email}
-        onChange={handleChange}
+        onChange={(e) => handleChange("email", e.target.value)}
         error={errors.email}
       />
 
       {/* Password Input */}
       <Input
         id="admin-password"
-        name="password"
         type={showPassword ? "text" : "password"}
         label="Password"
         placeholder="••••••••"
@@ -158,7 +189,7 @@ export function AdminLoginForm() {
         required
         disabled={isLoading}
         value={formData.password}
-        onChange={handleChange}
+        onChange={(e) => handleChange("password", e.target.value)}
         error={errors.password}
         rightSlot={
           <button
@@ -232,7 +263,8 @@ export function AdminLoginForm() {
       {/* Submit Button */}
       <div className="pt-2">
         <Button
-          type="submit"
+          type="button"
+          onClick={handleLogin}
           variant="primary"
           size="lg"
           isLoading={isLoading}
@@ -242,6 +274,6 @@ export function AdminLoginForm() {
           Sign In
         </Button>
       </div>
-    </form>
+    </div>
   );
 }
