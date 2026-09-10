@@ -32,13 +32,15 @@ export default function NursesPage() {
 
   // Toast notifications
   const [toast, setToast] = useState<ToastNotification | null>(null);
-  const showToast = (message: string, type: "success" | "error" = "success") => {
-    const id = Date.now();
+  const toastSeq = React.useRef(0);
+  const showToast = React.useCallback((message: string, type: "success" | "error" = "success") => {
+    toastSeq.current += 1;
+    const id = toastSeq.current;
     setToast({ id, type, message });
     setTimeout(() => {
       setToast((current) => (current?.id === id ? null : current));
     }, 4000);
-  };
+  }, []);
 
   // -------------------------------------------------------------
   // Modals state
@@ -226,6 +228,17 @@ export default function NursesPage() {
       // Fallback to local row data
     } finally {
       setIsLoadingView(false);
+    }
+  };
+
+  const handleUnassignRoomFromNurse = async (nurseId: string, room: Room) => {
+    try {
+      await nurseService.removeNurseFromRoom(nurseId, room.id);
+      setViewAssignedRooms((prev) => prev.filter((r) => r.id !== room.id));
+      showToast(`Nurse removed from Room ${room.room_number}.`, "success");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to unassign room.";
+      showToast(msg, "error");
     }
   };
 
@@ -991,10 +1004,20 @@ export default function NursesPage() {
                         {viewAssignedRooms.map((room) => (
                           <span
                             key={room.id}
-                            className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 border border-blue-200"
+                            className="inline-flex items-center gap-1.5 rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 border border-blue-200 group"
                           >
                             <span>Room {room.room_number}</span>
                             <span className="text-[10px] text-blue-500 font-normal">({room.type})</span>
+                            <button
+                              type="button"
+                              onClick={() => handleUnassignRoomFromNurse(viewNurse.id, room)}
+                              className="ml-0.5 rounded text-blue-400 hover:text-red-600 hover:bg-blue-100 p-0.5 transition-colors cursor-pointer"
+                              title={`Remove from Room ${room.room_number}`}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
                           </span>
                         ))}
                       </div>

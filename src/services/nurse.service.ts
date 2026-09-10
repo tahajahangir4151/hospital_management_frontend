@@ -196,5 +196,16 @@ export const nurseService = {
     );
     return nurseRoomAssignmentService.getNurseRooms(nurseId);
   },
+
+  /**
+   * Removes a nurse from an assigned room:
+   * DELETE /api/nurse-room-assignments/nurse/{nurseId}/room/{roomId}
+   */
+  async removeNurseFromRoom(nurseId: string, roomId: string) {
+    const { nurseRoomAssignmentService } = await import(
+      "@/services/nurse-room-assignment.service"
+    );
+    return nurseRoomAssignmentService.removeNurseFromRoom(nurseId, roomId);
+  },
 };
 

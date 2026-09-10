@@ -13,6 +13,7 @@ import {
   FilterToolbar,
   DataTable,
   ColumnDef,
+  ConfirmDeleteModal,
   Toast,
   ToastData,
 } from "@/components/common";
@@ -50,13 +51,15 @@ export default function NurseAssignmentsPage() {
 
   // Toast
   const [toast, setToast] = useState<ToastData | null>(null);
-  const showToast = (message: string, type: "success" | "error" = "success") => {
-    const id = Date.now();
+  const toastSeq = React.useRef(0);
+  const showToast = React.useCallback((message: string, type: "success" | "error" = "success") => {
+    toastSeq.current += 1;
+    const id = toastSeq.current;
     setToast({ id, type, message });
     setTimeout(() => {
       setToast((current) => (current?.id === id ? null : current));
     }, 4000);
-  };
+  }, []);
 
   // Assignment Modal
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
@@ -69,6 +72,14 @@ export default function NurseAssignmentsPage() {
   const [viewingNurse, setViewingNurse] = useState<Nurse | null>(null);
   const [viewingRooms, setViewingRooms] = useState<Room[]>([]);
   const [isLoadingViewRooms, setIsLoadingViewRooms] = useState(false);
+
+  // Delete Target Modal (DELETE /api/nurse-room-assignments/nurse/{nurseId}/room/{roomId})
+  const [deleteTarget, setDeleteTarget] = useState<{
+    nurse: Nurse;
+    room: Room;
+  } | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
+  const [removeError, setRemoveError] = useState<string | null>(null);
 
   // Load Rooms for a Nurse
   const fetchRoomsForNurse = useCallback(async (nurseId: string) => {
@@ -260,7 +271,7 @@ export default function NurseAssignmentsPage() {
     setIsAssignModalOpen(true);
   };
 
-  // Submit Room Assignment
+  // Submit Room Assignment (POST /api/nurse-room-assignments)
   const handleAssignSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedNurseId || !selectedRoomId) {
@@ -315,6 +326,48 @@ export default function NurseAssignmentsPage() {
     }
   };
 
+  // Open Unassign Modal (DELETE /api/nurse-room-assignments/nurse/{nurseId}/room/{roomId})
+  const handleOpenDeleteAssignment = (nurse: Nurse, room: Room) => {
+    setDeleteTarget({ nurse, room });
+    setRemoveError(null);
+  };
+
+  // Confirm Unassignment
+  const handleConfirmRemove = async () => {
+    if (!deleteTarget) return;
+
+    setIsRemoving(true);
+    setRemoveError(null);
+
+    try {
+      await nurseRoomAssignmentService.removeNurseFromRoom(
+        deleteTarget.nurse.id,
+        deleteTarget.room.id
+      );
+
+      // Update state locally
+      setNurseRoomsMap((prev) => ({
+        ...prev,
+        [deleteTarget.nurse.id]: (prev[deleteTarget.nurse.id] || []).filter(
+          (r) => r.id !== deleteTarget.room.id
+        ),
+      }));
+
+      setViewingRooms((prev) => prev.filter((r) => r.id !== deleteTarget.room.id));
+
+      showToast(
+        `Nurse "${deleteTarget.nurse.name}" removed from Room ${deleteTarget.room.room_number}.`,
+        "success"
+      );
+      setDeleteTarget(null);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to remove nurse from room.";
+      setRemoveError(msg);
+    } finally {
+      setIsRemoving(false);
+    }
+  };
+
   // Badge Helpers
   const renderShiftBadge = (shift: string) => {
     const s = shift?.toLowerCase() || "";
@@ -342,15 +395,15 @@ export default function NurseAssignmentsPage() {
     );
   };
 
-  const renderRoomBadge = (room: Room) => {
+  const renderRoomBadge = (nurse: Nurse, room: Room) => {
     return (
       <span
         key={room.id}
-        className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 border border-blue-200"
+        className="inline-flex items-center gap-1.5 rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 border border-blue-200 group"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-3 w-3 text-blue-500"
+          className="h-3 w-3 text-blue-500 shrink-0"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -363,7 +416,20 @@ export default function NurseAssignmentsPage() {
           />
         </svg>
         <span>Room {room.room_number}</span>
-        <span className="text-[10px] text-blue-500">({room.type})</span>
+        <span className="text-[10px] text-blue-500 font-normal">({room.type})</span>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleOpenDeleteAssignment(nurse, room);
+          }}
+          className="ml-0.5 rounded text-blue-400 hover:text-red-600 hover:bg-blue-100 p-0.5 transition-colors cursor-pointer"
+          title={`Remove from Room ${room.room_number}`}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </span>
     );
   };
@@ -436,7 +502,7 @@ export default function NurseAssignmentsPage() {
 
         return (
           <div className="flex flex-wrap items-center gap-1.5 max-w-sm">
-            {item.rooms.map(renderRoomBadge)}
+            {item.rooms.map((room) => renderRoomBadge(item.nurse, room))}
           </div>
         );
       },
@@ -919,10 +985,23 @@ export default function NurseAssignmentsPage() {
                           </p>
                         </div>
                       </div>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 border border-emerald-200">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                        Active
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 border border-emerald-200">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                          Active
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleOpenDeleteAssignment(viewingNurse, room)}
+                          className="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700 hover:bg-red-100 transition-colors cursor-pointer"
+                          title="Remove nurse from this room"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          <span>Unassign</span>
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -941,6 +1020,37 @@ export default function NurseAssignmentsPage() {
           </div>
         </div>
       )}
+
+      {/* ========================================================= */}
+      {/* CONFIRM UNASSIGN MODAL                                     */}
+      {/* (DELETE /api/nurse-room-assignments/nurse/{nurseId}/room/{roomId}) */}
+      {/* ========================================================= */}
+      <ConfirmDeleteModal
+        isOpen={!!deleteTarget}
+        title="Remove Room Assignment?"
+        subtitle="This will unassign the nurse from the selected hospital room."
+        description={
+          deleteTarget ? (
+            <div className="space-y-2">
+              <p>
+                Are you sure you want to remove nurse{" "}
+                <strong className="text-slate-900 font-semibold">{deleteTarget.nurse.name}</strong> from{" "}
+                <strong className="text-slate-900 font-semibold">Room {deleteTarget.room.room_number}</strong> ({deleteTarget.room.type})?
+              </p>
+              <div className="rounded-lg bg-slate-50 p-2.5 text-xs text-slate-500 font-mono space-y-0.5">
+                <p>Nurse ID: {deleteTarget.nurse.id}</p>
+                <p>Room ID: {deleteTarget.room.id}</p>
+              </div>
+            </div>
+          ) : null
+        }
+        confirmLabel="Remove Assignment"
+        cancelLabel="Cancel"
+        isDeleting={isRemoving}
+        errorMessage={removeError}
+        onConfirm={handleConfirmRemove}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }

@@ -32,3 +32,9 @@ export interface EnrichedNurseAssignment {
   contact_number: string;
   rooms: Room[];
 }
+
+export interface RemoveNurseRoomAssignmentResponse {
+  success: boolean;
+  message?: string;
+}
+

@@ -5,6 +5,7 @@ import {
   AssignNurseToRoomDTO,
   NurseRoomAssignmentResponse,
   NurseRoomsResponse,
+  RemoveNurseRoomAssignmentResponse,
 } from "@/types/nurse-room-assignment";
 
 export const nurseRoomAssignmentService = {
@@ -54,6 +55,23 @@ export const nurseRoomAssignmentService = {
       // Return empty array if nurse has no assigned rooms or not found
       console.warn(`Could not fetch rooms for nurse ${nurseId}:`, error);
       return [];
+    }
+  },
+
+  /**
+   * Removes a nurse from an assigned room:
+   * DELETE /api/nurse-room-assignments/nurse/{nurseId}/room/{roomId}
+   */
+  async removeNurseFromRoom(nurseId: string, roomId: string): Promise<void> {
+    const response = await apiClient<RemoveNurseRoomAssignmentResponse>(
+      `/api/nurse-room-assignments/nurse/${nurseId}/room/${roomId}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (response && response.success === false) {
+      throw new Error(response.message || "Failed to remove nurse from room");
     }
   },
 };
