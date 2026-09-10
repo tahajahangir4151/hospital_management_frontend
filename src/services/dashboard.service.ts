@@ -1,7 +1,9 @@
-import { apiClient } from "@/services/api-client";
 import { departmentService } from "@/services/department.service";
 import { doctorService } from "@/services/doctor.service";
 import { nurseService } from "@/services/nurse.service";
+import { patientService } from "@/services/patient.service";
+import { roomService } from "@/services/room.service";
+import { admissionService } from "@/services/admission.service";
 
 export interface DashboardMetrics {
   totalDepartments: number;
@@ -84,9 +86,9 @@ export const dashboardService = {
     const results = await Promise.allSettled([
       departmentService.getDepartments(forceRefresh),
       doctorService.getDoctors(forceRefresh),
-      apiClient<{ success: boolean; data: unknown[] }>("/api/patients"),
-      apiClient<{ success: boolean; data: unknown[] }>("/api/rooms"),
-      apiClient<{ success: boolean; data: unknown[] }>("/api/admissions"),
+      patientService.getPatients(forceRefresh),
+      roomService.getRooms(forceRefresh),
+      admissionService.getAdmissions(forceRefresh),
       nurseService.getNurses(forceRefresh),
     ]);
 
@@ -109,12 +111,25 @@ export const dashboardService = {
       return fallback;
     };
 
+    const getActiveAdmissionsCount = (
+      result: PromiseSettledResult<unknown>,
+      fallback = 0
+    ): number => {
+      if (result.status === "fulfilled") {
+        const val = result.value;
+        if (Array.isArray(val)) {
+          return val.filter((a) => a && typeof a === "object" && !("discharge_date" in a && a.discharge_date)).length;
+        }
+      }
+      return fallback;
+    };
+
     const metrics: DashboardMetrics = {
       totalDepartments: getCount(results[0], 0),
       totalDoctors: getCount(results[1], 0),
       totalPatients: getCount(results[2], 0),
       totalRooms: getCount(results[3], 0),
-      activeAdmissions: getCount(results[4], 0),
+      activeAdmissions: getActiveAdmissionsCount(results[4], 0),
       totalNurses: getCount(results[5], 0),
     };
 

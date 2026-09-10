@@ -1,36 +1,90 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
+import Link from "next/link";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { authService } from "@/services/auth.service";
 import { dashboardService, DashboardMetrics } from "@/services/dashboard.service";
+import { admissionService } from "@/services/admission.service";
+import { patientService } from "@/services/patient.service";
+import { roomService } from "@/services/room.service";
+import { doctorService } from "@/services/doctor.service";
+import { treatmentService } from "@/services/treatment.service";
 import { AuthUser } from "@/types/auth";
+import { Admission } from "@/types/admission";
+import { Patient } from "@/types/patient";
+import { Room } from "@/types/room";
+import { Doctor } from "@/types/doctor";
+import { Treatment } from "@/types/treatment";
 
 export default function DashboardPage() {
   const cachedMetrics = dashboardService.getCachedMetrics();
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user] = useState<AuthUser | null>(() => authService.getStoredUser());
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(() => cachedMetrics);
   const [isLoadingMetrics, setIsLoadingMetrics] = useState(() => cachedMetrics === null);
 
+  const [admissions, setAdmissions] = useState<Admission[]>(
+    () => admissionService.getCachedAdmissions() || []
+  );
+  const [rooms, setRooms] = useState<Room[]>(() => roomService.getCachedRooms() || []);
+  const [patients, setPatients] = useState<Patient[]>(
+    () => patientService.getCachedPatients() || []
+  );
+  const [doctors, setDoctors] = useState<Doctor[]>(() => doctorService.getCachedDoctors() || []);
+  const [treatments, setTreatments] = useState<Treatment[]>(
+    () => treatmentService.getCachedTreatments() || []
+  );
+  const [isLoadingDetails, setIsLoadingDetails] = useState(
+    () =>
+      !admissionService.getCachedAdmissions() ||
+      !roomService.getCachedRooms() ||
+      !patientService.getCachedPatients()
+  );
+
   useEffect(() => {
-    const currentUser = authService.getStoredUser();
-    setUser(currentUser);
+    let active = true;
 
-    // Only load from network if not already cached
-    if (!dashboardService.getCachedMetrics()) {
-      const loadMetrics = async () => {
-        try {
-          const data = await dashboardService.getMetrics(false);
-          setMetrics(data);
-        } catch (err) {
-          console.error("Failed to load dashboard metrics:", err);
-        } finally {
-          setIsLoadingMetrics(false);
+    const loadAll = async () => {
+      try {
+        const [
+          metricsData,
+          admissionsData,
+          roomsData,
+          patientsData,
+          doctorsData,
+          treatmentsData,
+        ] = await Promise.all([
+          dashboardService.getMetrics(false),
+          admissionService.getAdmissions(false),
+          roomService.getRooms(false),
+          patientService.getPatients(false),
+          doctorService.getDoctors(false),
+          treatmentService.getTreatments(false),
+        ]);
+
+        if (active) {
+          setMetrics(metricsData);
+          setAdmissions(admissionsData);
+          setRooms(roomsData);
+          setPatients(patientsData);
+          setDoctors(doctorsData);
+          setTreatments(treatmentsData);
         }
-      };
+      } catch (err) {
+        console.error("Failed to load dashboard data:", err);
+      } finally {
+        if (active) {
+          setIsLoadingMetrics(false);
+          setIsLoadingDetails(false);
+        }
+      }
+    };
 
-      loadMetrics();
-    }
+    loadAll();
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const adminName = user?.full_name || user?.email?.split("@")[0] || "Admin";
@@ -98,6 +152,7 @@ export default function DashboardPage() {
         : "Registered hospital patients",
       badgeText: "Active Registry",
       badgeType: "neutral" as const,
+      href: "/dashboard/patients",
       isLoading: isLoadingMetrics,
       icon: (
         <svg
@@ -124,6 +179,7 @@ export default function DashboardPage() {
         : "Rooms configured",
       badgeText: metrics && metrics.totalRooms > 0 ? `${metrics.totalRooms} Rooms` : "Available",
       badgeType: "success" as const,
+      href: "/dashboard/rooms",
       isLoading: isLoadingMetrics,
       icon: (
         <svg
@@ -150,6 +206,7 @@ export default function DashboardPage() {
         : "Currently admitted inpatients",
       badgeText: "Ongoing Care",
       badgeType: "info" as const,
+      href: "/dashboard/admissions",
       isLoading: isLoadingMetrics,
       icon: (
         <svg
@@ -197,60 +254,173 @@ export default function DashboardPage() {
     },
   ];
 
-  const recentAdmissions = [
-    {
-      patient: "Ali Khan",
-      patientId: "P-1048",
-      room: "ICU-02",
-      date: "Sep 09, 2026",
-      doctor: "Dr. Sarah Jenkins",
-      status: "Active",
-      statusType: "active",
-    },
-    {
-      patient: "Sara Ahmed",
-      patientId: "P-1042",
-      room: "P-105",
-      date: "Sep 08, 2026",
-      doctor: "Dr. Marcus Vance",
-      status: "Active",
-      statusType: "active",
-    },
-    {
-      patient: "Michael Chen",
-      patientId: "P-1039",
-      room: "G-204",
-      date: "Sep 08, 2026",
-      doctor: "Dr. Elena Rostova",
-      status: "Active",
-      statusType: "active",
-    },
-    {
-      patient: "Fatima Noor",
-      patientId: "P-1033",
-      room: "ICU-01",
-      date: "Sep 07, 2026",
-      doctor: "Dr. Sarah Jenkins",
-      status: "Observation",
-      statusType: "observation",
-    },
-    {
-      patient: "David Miller",
-      patientId: "P-1025",
-      room: "P-112",
-      date: "Sep 06, 2026",
-      doctor: "Dr. Robert Kim",
-      status: "Discharged",
-      statusType: "discharged",
-    },
-  ];
+  // Lookup maps for rapid relationship joins
+  const patientMap = useMemo(() => {
+    const map = new Map<string, Patient>();
+    patients.forEach((p) => map.set(p.id, p));
+    return map;
+  }, [patients]);
 
-  const roomCategories = [
-    { name: "General Ward", active: 24, total: 36, color: "bg-blue-600" },
-    { name: "Private Rooms", active: 14, total: 24, color: "bg-blue-600" },
-    { name: "Intensive Care (ICU)", active: 6, total: 8, color: "bg-amber-500" },
-    { name: "Emergency Unit", active: 4, total: 16, color: "bg-emerald-600" },
-  ];
+  const roomMap = useMemo(() => {
+    const map = new Map<string, Room>();
+    rooms.forEach((r) => map.set(r.id, r));
+    return map;
+  }, [rooms]);
+
+  const doctorMap = useMemo(() => {
+    const map = new Map<string, Doctor>();
+    doctors.forEach((d) => map.set(d.id, d));
+    return map;
+  }, [doctors]);
+
+  // Set of room IDs that currently have an active (not discharged) admission
+  const occupiedRoomIds = useMemo(() => {
+    const set = new Set<string>();
+    admissions.forEach((adm) => {
+      if (!adm.discharge_date) {
+        set.add(adm.room_id);
+      }
+    });
+    return set;
+  }, [admissions]);
+
+  // Real Recent Admissions list (most recent 5 arrivals)
+  const recentAdmissions = useMemo(() => {
+    const sorted = [...admissions].sort((a, b) => {
+      const dateA = new Date(a.admission_date || a.created_at).getTime();
+      const dateB = new Date(b.admission_date || b.created_at).getTime();
+      return dateB - dateA;
+    });
+
+    return sorted.slice(0, 5).map((adm) => {
+      const patient = patientMap.get(adm.patient_id);
+      const room = roomMap.get(adm.room_id);
+      // Associate attending doctor from medical treatment records if available
+      const treatment = treatments.find((t) => t.patient_id === adm.patient_id);
+      const doctor = treatment ? doctorMap.get(treatment.doctor_id) : null;
+
+      const patientName = patient?.name || `Patient #${adm.patient_id.slice(0, 6)}`;
+      const patientIdDisplay = patient?.id
+        ? `P-${patient.id.slice(0, 4).toUpperCase()}`
+        : `P-${adm.patient_id.slice(0, 4).toUpperCase()}`;
+
+      const roomDisplay = room?.room_number || "Unassigned";
+
+      let dateDisplay = "N/A";
+      if (adm.admission_date) {
+        const d = new Date(adm.admission_date);
+        if (!isNaN(d.getTime())) {
+          dateDisplay = d.toLocaleDateString("en-US", {
+            month: "short",
+            day: "2-digit",
+            year: "numeric",
+          });
+        }
+      }
+
+      let doctorDisplay = "Attending On-Call";
+      if (doctor?.full_name) {
+        doctorDisplay = doctor.full_name.toLowerCase().startsWith("dr")
+          ? doctor.full_name
+          : `Dr. ${doctor.full_name}`;
+      } else if (doctors.length > 0) {
+        const primaryDoc = doctors[0];
+        doctorDisplay = primaryDoc.full_name.toLowerCase().startsWith("dr")
+          ? primaryDoc.full_name
+          : `Dr. ${primaryDoc.full_name}`;
+      }
+
+      const isActive = !adm.discharge_date;
+      let status = "Discharged";
+      let statusType: "active" | "observation" | "discharged" = "discharged";
+
+      if (isActive) {
+        if (
+          room?.type?.toLowerCase().includes("icu") ||
+          room?.type?.toLowerCase().includes("emergency")
+        ) {
+          status = "Observation";
+          statusType = "observation";
+        } else {
+          status = "Active";
+          statusType = "active";
+        }
+      }
+
+      return {
+        id: adm.id,
+        patient: patientName,
+        patientId: patientIdDisplay,
+        room: roomDisplay,
+        date: dateDisplay,
+        doctor: doctorDisplay,
+        status,
+        statusType,
+      };
+    });
+  }, [admissions, patientMap, roomMap, doctorMap, treatments, doctors]);
+
+  // Real Room Overview & Capacity breakdown
+  const roomOverview = useMemo(() => {
+    const totalRooms = rooms.length;
+    const occupiedCount = occupiedRoomIds.size;
+    const occupancyRate =
+      totalRooms > 0 ? Math.round((occupiedCount / totalRooms) * 100) : 0;
+    const readyRooms = Math.max(0, totalRooms - occupiedCount);
+
+    const categories = [
+      {
+        name: "General Ward",
+        match: (type: string) => /general/i.test(type),
+        color: "bg-blue-600",
+      },
+      {
+        name: "Private Rooms",
+        match: (type: string) => /private|suite/i.test(type),
+        color: "bg-blue-600",
+      },
+      {
+        name: "Intensive Care (ICU)",
+        match: (type: string) => /icu|critical|intensive/i.test(type),
+        color: "bg-amber-500",
+      },
+      {
+        name: "Emergency Unit",
+        match: (type: string) => /emergency|isolation/i.test(type),
+        color: "bg-emerald-600",
+      },
+    ];
+
+    const breakdown = categories.map((cat) => {
+      const matchingRooms = rooms.filter((r) => cat.match(r.type || ""));
+      const total = matchingRooms.length;
+      const active = matchingRooms.filter((r) => occupiedRoomIds.has(r.id)).length;
+      const percentage = total > 0 ? Math.round((active / total) * 100) : 0;
+
+      return {
+        name: cat.name,
+        active,
+        total,
+        percentage,
+        color: cat.color,
+      };
+    });
+
+    return {
+      occupancyRate,
+      readyRooms,
+      breakdown,
+    };
+  }, [rooms, occupiedRoomIds]);
+
+  const [currentDateStr] = useState(() =>
+    new Date().toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+    })
+  );
 
   return (
     <div className="space-y-6">
@@ -274,7 +444,7 @@ export default function DashboardPage() {
 
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600">
-              Wednesday, Sep 09, 2026
+              {currentDateStr}
             </span>
           </div>
         </div>
@@ -310,9 +480,12 @@ export default function DashboardPage() {
                 Latest inpatient hospital arrivals and assignments
               </p>
             </div>
-            <span className="text-xs font-medium text-blue-600 hover:text-blue-700 cursor-pointer">
+            <Link
+              href="/dashboard/admissions"
+              className="text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors"
+            >
               View All
-            </span>
+            </Link>
           </div>
 
           <div className="overflow-x-auto">
@@ -327,44 +500,67 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
-                {recentAdmissions.map((row) => (
-                  <tr key={row.patientId} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="py-3.5 pr-4">
-                      <p className="font-semibold text-slate-900 leading-tight">
-                        {row.patient}
-                      </p>
-                      <p className="text-xs text-slate-400 font-mono leading-tight">
-                        {row.patientId}
-                      </p>
-                    </td>
-                    <td className="py-3.5 px-4 font-medium text-slate-800">
-                      {row.room}
-                    </td>
-                    <td className="py-3.5 px-4 text-slate-500 text-xs">
-                      {row.date}
-                    </td>
-                    <td className="py-3.5 px-4 text-slate-600 text-xs sm:text-sm">
-                      {row.doctor}
-                    </td>
-                    <td className="py-3.5 pl-4 text-right">
-                      {row.statusType === "active" && (
-                        <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 border border-emerald-200">
-                          Active
-                        </span>
-                      )}
-                      {row.statusType === "observation" && (
-                        <span className="inline-flex items-center rounded-md bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 border border-amber-200">
-                          Observation
-                        </span>
-                      )}
-                      {row.statusType === "discharged" && (
-                        <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600 border border-slate-200">
-                          Discharged
-                        </span>
-                      )}
+                {isLoadingDetails ? (
+                  <tr>
+                    <td colSpan={5} className="py-8 text-center text-slate-400 text-xs">
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+                        <span>Loading live admissions...</span>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : recentAdmissions.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-8 text-center text-slate-400 text-xs">
+                      No recent admissions recorded.{" "}
+                      <Link
+                        href="/dashboard/admissions"
+                        className="text-blue-600 font-medium hover:underline"
+                      >
+                        Admit a patient
+                      </Link>
+                    </td>
+                  </tr>
+                ) : (
+                  recentAdmissions.map((row) => (
+                    <tr key={row.id} className="hover:bg-slate-50/70 transition-colors">
+                      <td className="py-3.5 pr-4">
+                        <p className="font-semibold text-slate-900 leading-tight">
+                          {row.patient}
+                        </p>
+                        <p className="text-xs text-slate-400 font-mono leading-tight">
+                          {row.patientId}
+                        </p>
+                      </td>
+                      <td className="py-3.5 px-4 font-medium text-slate-800">
+                        {row.room}
+                      </td>
+                      <td className="py-3.5 px-4 text-slate-500 text-xs">
+                        {row.date}
+                      </td>
+                      <td className="py-3.5 px-4 text-slate-600 text-xs sm:text-sm">
+                        {row.doctor}
+                      </td>
+                      <td className="py-3.5 pl-4 text-right">
+                        {row.statusType === "active" && (
+                          <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 border border-emerald-200">
+                            Active
+                          </span>
+                        )}
+                        {row.statusType === "observation" && (
+                          <span className="inline-flex items-center rounded-md bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 border border-amber-200">
+                            Observation
+                          </span>
+                        )}
+                        {row.statusType === "discharged" && (
+                          <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600 border border-slate-200">
+                            Discharged
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -378,7 +574,7 @@ export default function DashboardPage() {
                 Room Overview
               </h3>
               <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700 border border-blue-200">
-                57% Occupancy
+                {roomOverview.occupancyRate}% Occupancy
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-0.5">
@@ -388,35 +584,51 @@ export default function DashboardPage() {
 
           {/* Breakdown Items */}
           <div className="space-y-4">
-            {roomCategories.map((category) => {
-              const percentage = Math.round((category.active / category.total) * 100);
-              return (
+            {isLoadingDetails ? (
+              <div className="py-8 flex items-center justify-center gap-2 text-slate-400 text-xs">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+                <span>Loading ward breakdown...</span>
+              </div>
+            ) : (
+              roomOverview.breakdown.map((category) => (
                 <div key={category.name} className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-medium text-slate-800">{category.name}</span>
                     <span className="text-slate-500 font-mono">
-                      {category.active} / {category.total} beds
+                      {category.active} / {category.total}{" "}
+                      {category.total === 1 ? "bed" : "beds"}
                     </span>
                   </div>
 
                   {/* Progress Bar */}
                   <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
                     <div
-                      className={`h-full rounded-full ${category.color}`}
-                      style={{ width: `${percentage}%` }}
+                      className={`h-full rounded-full transition-all duration-500 ${category.color}`}
+                      style={{ width: `${category.percentage}%` }}
                     />
                   </div>
                 </div>
-              );
-            })}
+              ))
+            )}
           </div>
 
           {/* Room Summary Note */}
           <div className="mt-6 rounded-lg bg-slate-50 p-3.5 border border-slate-100 text-xs text-slate-600">
             <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
+              <span
+                className={`h-2 w-2 rounded-full shrink-0 ${
+                  roomOverview.readyRooms > 0 ? "bg-emerald-500" : "bg-amber-500"
+                }`}
+              />
               <p>
-                <strong className="text-slate-900">36 Rooms Ready</strong>: Sanitized and available for immediate inpatient admission.
+                <strong className="text-slate-900">
+                  {roomOverview.readyRooms}{" "}
+                  {roomOverview.readyRooms === 1 ? "Room" : "Rooms"} Ready
+                </strong>
+                :{" "}
+                {roomOverview.readyRooms > 0
+                  ? "Sanitized and available for immediate inpatient admission."
+                  : "All configured rooms are currently occupied or none configured."}
               </p>
             </div>
           </div>
