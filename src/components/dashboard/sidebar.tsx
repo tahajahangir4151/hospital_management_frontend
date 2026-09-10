@@ -328,6 +328,7 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
                   "/dashboard/admissions",
                   "/dashboard/treatments",
                   "/dashboard/nurse-assignments",
+                  "/dashboard/billing",
                 ];
                 const isImplemented = implementedRoutes.includes(item.href);
 

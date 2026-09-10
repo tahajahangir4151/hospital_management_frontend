@@ -818,7 +818,7 @@ export default function NurseAssignmentsPage() {
                   </option>
                   {rooms.map((room) => (
                     <option key={room.id} value={room.id}>
-                      Room {room.room_number} ({room.type}) — ${room.daily_charge}/day
+                      Room {room.room_number} ({room.type}) — PKR {Number(room.daily_charge).toLocaleString()}/day
                     </option>
                   ))}
                 </select>
@@ -981,7 +981,7 @@ export default function NurseAssignmentsPage() {
                             Room {room.room_number}
                           </p>
                           <p className="text-xs text-slate-500">
-                            {room.type} Ward • Daily Charge: ${room.daily_charge}
+                            {room.type} Ward • Daily Charge: PKR {Number(room.daily_charge).toLocaleString()}
                           </p>
                         </div>
                       </div>
