@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
+import Link from "next/link";
 import { nurseService } from "@/services/nurse.service";
 import { departmentService } from "@/services/department.service";
 import { dashboardService } from "@/services/dashboard.service";
 import { Nurse, CreateNurseDTO, UpdateNurseDTO } from "@/types/nurse";
+import { Room } from "@/types/room";
 import { Department } from "@/types/department";
 
 interface ToastNotification {
@@ -54,6 +56,7 @@ export default function NursesPage() {
 
   // View Details Modal
   const [viewNurse, setViewNurse] = useState<Nurse | null>(null);
+  const [viewAssignedRooms, setViewAssignedRooms] = useState<Room[]>([]);
   const [isLoadingView, setIsLoadingView] = useState(false);
 
   // Edit Modal
@@ -100,9 +103,30 @@ export default function NursesPage() {
   };
 
   useEffect(() => {
+    let active = true;
     if (!nurseService.getCachedNurses() || !departmentService.getCachedDepartments()) {
-      loadData(false);
+      Promise.all([
+        nurseService.getNurses(false),
+        departmentService.getDepartments(false),
+      ])
+        .then(([nursesData, departmentsData]) => {
+          if (active) {
+            setNurses(nursesData);
+            setDepartments(departmentsData);
+            setIsLoading(false);
+          }
+        })
+        .catch((err: unknown) => {
+          if (active) {
+            const msg = err instanceof Error ? err.message : "Failed to load nurses data.";
+            setError(msg);
+            setIsLoading(false);
+          }
+        });
     }
+    return () => {
+      active = false;
+    };
   }, []);
 
   // Department ID to Name lookup map
@@ -184,15 +208,20 @@ export default function NursesPage() {
   };
 
   // -------------------------------------------------------------
-  // View Nurse (GET /api/nurses/{id})
+  // View Nurse (GET /api/nurses/{id} & GET /api/nurses/{id}/rooms)
   // -------------------------------------------------------------
   const handleOpenView = async (nurse: Nurse) => {
     setViewNurse(nurse);
+    setViewAssignedRooms([]);
     setIsLoadingView(true);
 
     try {
-      const freshData = await nurseService.getNurseById(nurse.id);
+      const [freshData, roomsData] = await Promise.all([
+        nurseService.getNurseById(nurse.id),
+        nurseService.getNurseRooms(nurse.id),
+      ]);
       setViewNurse(freshData);
+      setViewAssignedRooms(roomsData);
     } catch {
       // Fallback to local row data
     } finally {
@@ -396,6 +425,28 @@ export default function NursesPage() {
               </svg>
               <span>Refresh</span>
             </button>
+
+            <Link
+              href="/dashboard/nurse-assignments"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors cursor-pointer"
+              title="Manage nurse room assignments"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 text-blue-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              <span>Room Assignments</span>
+            </Link>
 
             <button
               type="button"
@@ -918,6 +969,36 @@ export default function NursesPage() {
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-slate-500 uppercase">Date Registered</span>
                     <span className="text-xs text-slate-700">{formatDate(viewNurse.created_at)}</span>
+                  </div>
+
+                  {/* Assigned Rooms from GET /api/nurses/{id}/rooms */}
+                  <div className="pt-2.5 border-t border-slate-200/70">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs font-semibold text-slate-500 uppercase">
+                        Assigned Rooms ({viewAssignedRooms.length})
+                      </span>
+                      <Link
+                        href="/dashboard/nurse-assignments"
+                        className="text-[11px] font-semibold text-blue-600 hover:text-blue-700"
+                      >
+                        Manage &rarr;
+                      </Link>
+                    </div>
+                    {viewAssignedRooms.length === 0 ? (
+                      <p className="text-xs text-slate-400 italic">No rooms assigned to this nurse.</p>
+                    ) : (
+                      <div className="flex flex-wrap gap-1.5 mt-1">
+                        {viewAssignedRooms.map((room) => (
+                          <span
+                            key={room.id}
+                            className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 border border-blue-200"
+                          >
+                            <span>Room {room.room_number}</span>
+                            <span className="text-[10px] text-blue-500 font-normal">({room.type})</span>
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 

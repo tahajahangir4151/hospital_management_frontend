@@ -176,4 +176,25 @@ export const nurseService = {
       }
     }
   },
+
+  /**
+   * Assigns a nurse to a room: POST /api/nurse-room-assignments
+   */
+  async assignNurseToRoom(dto: { nurse_id: string; room_id: string }) {
+    const { nurseRoomAssignmentService } = await import(
+      "@/services/nurse-room-assignment.service"
+    );
+    return nurseRoomAssignmentService.assignNurseToRoom(dto);
+  },
+
+  /**
+   * Gets all rooms assigned to a nurse: GET /api/nurses/{id}/rooms
+   */
+  async getNurseRooms(nurseId: string) {
+    const { nurseRoomAssignmentService } = await import(
+      "@/services/nurse-room-assignment.service"
+    );
+    return nurseRoomAssignmentService.getNurseRooms(nurseId);
+  },
 };
+
