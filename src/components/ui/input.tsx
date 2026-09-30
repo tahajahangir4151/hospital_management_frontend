@@ -19,10 +19,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm font-medium text-slate-700"
+            className="block text-sm font-medium text-slate-700 dark:text-slate-200"
           >
             {label}
-            {required && <span className="ml-1 text-red-600">*</span>}
+            {required && <span className="ml-1 text-red-600 dark:text-red-400">*</span>}
           </label>
         )}
 
@@ -34,10 +34,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             aria-invalid={Boolean(error)}
             aria-describedby={errorId || helperId}
             className={cn(
-              "w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-900 transition-colors placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-100",
+              "w-full rounded-lg border bg-white dark:bg-slate-900/90 px-3.5 py-2.5 text-sm text-slate-900 dark:text-slate-100 transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40",
               error
-                ? "border-red-500 focus:border-red-600 focus:ring-red-100"
-                : "border-slate-200 hover:border-slate-300 focus:border-blue-600",
+                ? "border-red-500 dark:border-red-500 focus:border-red-600 dark:focus:border-red-500 focus:ring-red-100 dark:focus:ring-red-950/40"
+                : "border-slate-200 dark:border-slate-750 hover:border-slate-300 dark:hover:border-slate-650 focus:border-blue-600 dark:focus:border-blue-500",
               rightSlot ? "pr-11" : "",
               className
             )}
@@ -51,13 +51,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         </div>
 
         {error && (
-          <p id={errorId} className="text-xs font-medium text-red-600">
+          <p id={errorId} className="text-xs font-medium text-red-600 dark:text-red-400">
             {error}
           </p>
         )}
 
         {helperText && !error && (
-          <p id={helperId} className="text-xs text-slate-500">
+          <p id={helperId} className="text-xs text-slate-500 dark:text-slate-400">
             {helperText}
           </p>
         )}

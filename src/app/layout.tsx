@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { APP_CONFIG } from "@/constants";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,10 +16,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: `Admin Login | ${APP_CONFIG.systemTitle}`,
+    default: `Admin Portal | ${APP_CONFIG.systemTitle}`,
     template: `%s | ${APP_CONFIG.name}`,
   },
-  description: "Secure Admin Login for Hospital Management System",
+  description: "Advanced Hospital Operations & Medical Command Center",
 };
 
 export default function RootLayout({
@@ -35,7 +36,18 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations().then(function(regs) { for (var i = 0; i < regs.length; i++) { regs[i].unregister(); } }); }`,
+            __html: `
+              try {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.removeItem('hms_theme');
+              } catch (e) {}
+              if ('serviceWorker' in navigator) { 
+                navigator.serviceWorker.getRegistrations().then(function(regs) { 
+                  for (var i = 0; i < regs.length; i++) { regs[i].unregister(); } 
+                }); 
+              }
+            `,
           }}
         />
       </head>
@@ -43,7 +55,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className="min-h-full flex flex-col bg-slate-50 text-slate-900 antialiased"
       >
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

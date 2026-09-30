@@ -19,6 +19,7 @@ import {
   Toast,
   ToastNotification,
 } from "@/components/common";
+import { Sparkline } from "@/components/dashboard/sparkline";
 
 export default function PatientsPage() {
   const cachedPatients = patientService.getCachedPatients();
@@ -531,7 +532,7 @@ export default function PatientsPage() {
             <button
               type="button"
               onClick={() => handleOpenView(patient)}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors cursor-pointer"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
               title="View patient profile"
               aria-label={`View ${patient.name}`}
             >
@@ -560,7 +561,7 @@ export default function PatientsPage() {
             <button
               type="button"
               onClick={() => handleOpenEdit(patient)}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 dark:text-slate-500 hover:bg-blue-50 dark:hover:bg-blue-950/60 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
               title="Edit patient"
               aria-label={`Edit ${patient.name}`}
             >
@@ -583,7 +584,7 @@ export default function PatientsPage() {
             <button
               type="button"
               onClick={() => handleOpenDelete(patient)}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 dark:text-slate-500 hover:bg-red-50 dark:hover:bg-red-950/60 hover:text-red-600 dark:hover:text-red-400 transition-colors cursor-pointer"
               title="Delete patient"
               aria-label={`Delete ${patient.name}`}
             >
@@ -634,61 +635,77 @@ export default function PatientsPage() {
       {/* Metrics Summary Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Patients */}
-        <div className="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all hover:shadow-sm">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.8}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-              />
-            </svg>
+        <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-5 shadow-xs transition-all hover:shadow-md hover:border-blue-500/40 dark:hover:border-blue-500/40">
+          <div className="flex items-start justify-between">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 group-hover:scale-105 transition-transform">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                />
+              </svg>
+            </div>
+            <Sparkline
+              data={[metrics.total * 0.8, metrics.total * 0.85, metrics.total * 0.9, metrics.total * 0.95, metrics.total]}
+              color="#3b82f6"
+              width={76}
+              height={32}
+            />
           </div>
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
+          <div className="mt-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Total Patients
             </p>
-            <p className="mt-0.5 text-2xl font-bold tracking-tight text-slate-900">
+            <p className="mt-1 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
               {metrics.total}
             </p>
           </div>
         </div>
 
         {/* Male Patients */}
-        <div className="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all hover:shadow-sm">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.8}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              />
-            </svg>
+        <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-5 shadow-xs transition-all hover:shadow-md hover:border-sky-500/40 dark:hover:border-sky-500/40">
+          <div className="flex items-start justify-between">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 group-hover:scale-105 transition-transform">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+            </div>
+            <Sparkline
+              data={[metrics.maleCount * 0.82, metrics.maleCount * 0.88, metrics.maleCount * 0.91, metrics.maleCount * 0.96, metrics.maleCount]}
+              color="#0284c7"
+              width={76}
+              height={32}
+            />
           </div>
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
+          <div className="mt-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Male Patients
             </p>
-            <div className="mt-0.5 flex items-baseline gap-2">
-              <span className="text-2xl font-bold tracking-tight text-slate-900">
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
                 {metrics.maleCount}
               </span>
               {metrics.total > 0 && (
-                <span className="text-xs font-semibold text-sky-600">
+                <span className="rounded-full bg-sky-100 dark:bg-sky-950/80 px-2 py-0.5 text-xs font-semibold text-sky-700 dark:text-sky-300">
                   {Math.round((metrics.maleCount / metrics.total) * 100)}%
                 </span>
               )}
@@ -697,33 +714,41 @@ export default function PatientsPage() {
         </div>
 
         {/* Female Patients */}
-        <div className="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all hover:shadow-sm">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-rose-50 text-rose-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.8}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              />
-            </svg>
+        <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-5 shadow-xs transition-all hover:shadow-md hover:border-rose-500/40 dark:hover:border-rose-500/40">
+          <div className="flex items-start justify-between">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 group-hover:scale-105 transition-transform">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+            </div>
+            <Sparkline
+              data={[metrics.femaleCount * 0.85, metrics.femaleCount * 0.9, metrics.femaleCount * 0.88, metrics.femaleCount * 0.95, metrics.femaleCount]}
+              color="#e11d48"
+              width={76}
+              height={32}
+            />
           </div>
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
+          <div className="mt-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Female Patients
             </p>
-            <div className="mt-0.5 flex items-baseline gap-2">
-              <span className="text-2xl font-bold tracking-tight text-slate-900">
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
                 {metrics.femaleCount}
               </span>
               {metrics.total > 0 && (
-                <span className="text-xs font-semibold text-rose-600">
+                <span className="rounded-full bg-rose-100 dark:bg-rose-950/80 px-2 py-0.5 text-xs font-semibold text-rose-700 dark:text-rose-300">
                   {Math.round((metrics.femaleCount / metrics.total) * 100)}%
                 </span>
               )}
@@ -732,28 +757,36 @@ export default function PatientsPage() {
         </div>
 
         {/* Recent Registrations */}
-        <div className="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all hover:shadow-sm">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.8}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
+        <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-5 shadow-xs transition-all hover:shadow-md hover:border-emerald-500/40 dark:hover:border-emerald-500/40">
+          <div className="flex items-start justify-between">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 group-hover:scale-105 transition-transform">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+            <Sparkline
+              data={[Math.max(1, metrics.recentCount * 0.4), metrics.recentCount * 0.6, metrics.recentCount * 0.75, metrics.recentCount * 0.9, metrics.recentCount]}
+              color="#10b981"
+              width={76}
+              height={32}
+            />
           </div>
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
+          <div className="mt-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Registered (Last 30d)
             </p>
-            <p className="mt-0.5 text-2xl font-bold tracking-tight text-slate-900">
+            <p className="mt-1 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
               {metrics.recentCount}
             </p>
           </div>
@@ -868,21 +901,21 @@ export default function PatientsPage() {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-200"
         >
-          <div className="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl transition-all">
+          <div className="relative w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-2xl transition-all border border-slate-100 dark:border-slate-800">
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Register New Patient</h3>
-                <p className="text-xs text-slate-500">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Register New Patient</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Enter patient personal and contact information to register into the system.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setIsCreateOpen(false)}
-                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300"
               >
                 &times;
               </button>
@@ -890,7 +923,7 @@ export default function PatientsPage() {
 
             {/* Error in modal */}
             {createError && (
-              <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+              <div className="mt-4 rounded-xl border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/40 p-3 text-xs text-red-700 dark:text-red-300">
                 {createError}
               </div>
             )}
@@ -899,7 +932,7 @@ export default function PatientsPage() {
             <form onSubmit={handleCreateSubmit} className="mt-4 space-y-4">
               {/* Full Name */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   Full Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -908,14 +941,14 @@ export default function PatientsPage() {
                   placeholder="e.g. Ali Khan"
                   value={createForm.name}
                   onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-750 bg-white dark:bg-slate-850 px-3.5 py-2 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 />
               </div>
 
               {/* Date of Birth & Gender Grid */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                     Date of Birth <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -924,19 +957,19 @@ export default function PatientsPage() {
                     max={new Date().toISOString().split("T")[0]}
                     value={createForm.date_of_birth}
                     onChange={(e) => setCreateForm({ ...createForm, date_of_birth: e.target.value })}
-                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-750 bg-white dark:bg-slate-850 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                     Gender <span className="text-red-500">*</span>
                   </label>
                   <select
                     required
                     value={createForm.gender}
                     onChange={(e) => setCreateForm({ ...createForm, gender: e.target.value })}
-                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-750 bg-white dark:bg-slate-850 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                   >
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
@@ -947,7 +980,7 @@ export default function PatientsPage() {
 
               {/* Phone Number */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   Phone Number <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -956,13 +989,13 @@ export default function PatientsPage() {
                   placeholder="e.g. 03001234567"
                   value={createForm.phone_number}
                   onChange={(e) => setCreateForm({ ...createForm, phone_number: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-750 bg-white dark:bg-slate-850 px-3.5 py-2 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 />
               </div>
 
               {/* Residential Address */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   Residential Address <span className="text-red-500">*</span>
                 </label>
                 <textarea
@@ -971,17 +1004,17 @@ export default function PatientsPage() {
                   placeholder="e.g. House #12, Street 4, Gulberg III, Lahore, Pakistan"
                   value={createForm.address}
                   onChange={(e) => setCreateForm({ ...createForm, address: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-750 bg-white dark:bg-slate-850 px-3.5 py-2 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 />
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setIsCreateOpen(false)}
                   disabled={isCreating}
-                  className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+                  className="rounded-xl border border-slate-200 dark:border-slate-750 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   Cancel
                 </button>
@@ -1013,17 +1046,17 @@ export default function PatientsPage() {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-200"
         >
-          <div className="relative w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl transition-all">
+          <div className="relative w-full max-w-2xl rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-2xl transition-all border border-slate-100 dark:border-slate-800">
             {/* Header */}
-            <div className="flex items-start justify-between border-b border-slate-100 pb-4">
+            <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
               <div className="flex items-center gap-4">
                 <div
                   className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl font-bold text-lg select-none ${
                     viewPatient.gender?.toLowerCase() === "female"
-                      ? "bg-rose-100 text-rose-700"
-                      : "bg-blue-100 text-blue-700"
+                      ? "bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300"
+                      : "bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300"
                   }`}
                 >
                   {viewPatient.name
@@ -1036,16 +1069,16 @@ export default function PatientsPage() {
                     : "PT"}
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900">{viewPatient.name}</h3>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">{viewPatient.name}</h3>
                   <div className="flex flex-wrap items-center gap-2 mt-1">
-                    <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-0.5 text-xs font-mono text-slate-600">
+                    <span className="inline-flex items-center rounded-md bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-xs font-mono text-slate-600 dark:text-slate-300">
                       UUID: {viewPatient.id}
                     </span>
                     <span
                       className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold ${
                         viewPatient.gender?.toLowerCase() === "female"
-                          ? "bg-rose-50 text-rose-700"
-                          : "bg-sky-50 text-sky-700"
+                          ? "bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300"
+                          : "bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300"
                       }`}
                     >
                       {viewPatient.gender}
@@ -1056,21 +1089,21 @@ export default function PatientsPage() {
               <button
                 type="button"
                 onClick={() => setViewPatient(null)}
-                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300"
               >
                 &times;
               </button>
             </div>
 
             {/* Navigation Tabs */}
-            <div className="flex border-b border-slate-200 mt-4">
+            <div className="flex border-b border-slate-200 dark:border-slate-800 mt-4">
               <button
                 type="button"
                 onClick={() => setActiveTab("profile")}
                 className={`border-b-2 py-2.5 px-4 text-xs font-semibold uppercase tracking-wider transition-colors ${
                   activeTab === "profile"
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-slate-500 hover:text-slate-700"
+                    ? "border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-500"
+                    : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                 }`}
               >
                 Profile Details
@@ -1080,8 +1113,8 @@ export default function PatientsPage() {
                 onClick={() => setActiveTab("treatments")}
                 className={`border-b-2 py-2.5 px-4 text-xs font-semibold uppercase tracking-wider transition-colors ${
                   activeTab === "treatments"
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-slate-500 hover:text-slate-700"
+                    ? "border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-500"
+                    : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                 }`}
               >
                 Treatments ({viewTreatments.length})
@@ -1091,8 +1124,8 @@ export default function PatientsPage() {
                 onClick={() => setActiveTab("admissions")}
                 className={`border-b-2 py-2.5 px-4 text-xs font-semibold uppercase tracking-wider transition-colors ${
                   activeTab === "admissions"
-                    ? "border-blue-600 text-blue-600"
-                    : "border-transparent text-slate-500 hover:text-slate-700"
+                    ? "border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-500"
+                    : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                 }`}
               >
                 Admissions ({viewAdmissions.length})
@@ -1104,45 +1137,45 @@ export default function PatientsPage() {
               {activeTab === "profile" && (
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-3.5">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                    <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/80 p-3.5">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-400">
                         Date of Birth & Age
                       </p>
-                      <p className="mt-1 font-semibold text-slate-900">
+                      <p className="mt-1 font-semibold text-slate-900 dark:text-white">
                         {formatDate(viewPatient.date_of_birth)}{" "}
-                        <span className="text-slate-500 font-normal">
+                        <span className="text-slate-500 dark:text-slate-400 font-normal">
                           ({calculateAge(viewPatient.date_of_birth)} years old)
                         </span>
                       </p>
                     </div>
 
-                    <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-3.5">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                    <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/80 p-3.5">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-400">
                         Contact Phone
                       </p>
                       <a
                         href={`tel:${viewPatient.phone_number}`}
-                        className="mt-1 inline-flex items-center gap-1.5 font-semibold text-blue-600 hover:underline"
+                        className="mt-1 inline-flex items-center gap-1.5 font-semibold text-blue-600 dark:text-blue-400 hover:underline"
                       >
                         {viewPatient.phone_number}
                       </a>
                     </div>
                   </div>
 
-                  <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-3.5">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/80 p-3.5">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-400">
                       Residential Address
                     </p>
-                    <p className="mt-1 text-sm font-medium text-slate-800">
+                    <p className="mt-1 text-sm font-medium text-slate-800 dark:text-slate-200">
                       {viewPatient.address}
                     </p>
                   </div>
 
-                  <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-3.5">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/80 p-3.5">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-400">
                       Initial Registration Date
                     </p>
-                    <p className="mt-1 text-sm font-medium text-slate-800">
+                    <p className="mt-1 text-sm font-medium text-slate-800 dark:text-slate-200">
                       {formatDateTime(viewPatient.created_at)}
                     </p>
                   </div>
@@ -1152,11 +1185,11 @@ export default function PatientsPage() {
               {activeTab === "treatments" && (
                 <div className="space-y-3">
                   {isLoadingViewHistory ? (
-                    <div className="py-8 text-center text-sm text-slate-500">
+                    <div className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">
                       Loading treatment history...
                     </div>
                   ) : viewTreatments.length === 0 ? (
-                    <div className="py-8 text-center text-sm text-slate-400">
+                    <div className="py-8 text-center text-sm text-slate-400 dark:text-slate-500">
                       No treatments recorded for this patient yet.
                     </div>
                   ) : (
@@ -1164,16 +1197,16 @@ export default function PatientsPage() {
                       {viewTreatments.map((t, idx) => (
                         <div
                           key={t.id || idx}
-                          className="rounded-xl border border-slate-100 bg-slate-50/60 p-3 text-xs"
+                          className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850/80 p-3 text-xs"
                         >
-                          <p className="font-semibold text-slate-900">
+                          <p className="font-semibold text-slate-900 dark:text-white">
                             {t.treatment_name || t.diagnosis || "Medical Treatment"}
                           </p>
-                          <p className="text-slate-500 mt-0.5">
+                          <p className="text-slate-500 dark:text-slate-400 mt-0.5">
                             {t.description || t.notes || "No notes available"}
                           </p>
                           {t.treatment_date && (
-                            <p className="text-[11px] text-slate-400 mt-1">
+                            <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
                               Date: {formatDate(t.treatment_date)}
                             </p>
                           )}
@@ -1187,11 +1220,11 @@ export default function PatientsPage() {
               {activeTab === "admissions" && (
                 <div className="space-y-3">
                   {isLoadingViewHistory ? (
-                    <div className="py-8 text-center text-sm text-slate-500">
+                    <div className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">
                       Loading admissions history...
                     </div>
                   ) : viewAdmissions.length === 0 ? (
-                    <div className="py-8 text-center text-sm text-slate-400">
+                    <div className="py-8 text-center text-sm text-slate-400 dark:text-slate-500">
                       No admission records found for this patient.
                     </div>
                   ) : (
@@ -1199,17 +1232,17 @@ export default function PatientsPage() {
                       {viewAdmissions.map((adm, idx) => (
                         <div
                           key={adm.id || idx}
-                          className="rounded-xl border border-slate-100 bg-slate-50/60 p-3 text-xs"
+                          className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850/80 p-3 text-xs"
                         >
                           <div className="flex justify-between items-center">
-                            <span className="font-semibold text-slate-900">
+                            <span className="font-semibold text-slate-900 dark:text-white">
                               Admission #{adm.id?.slice(0, 8)}
                             </span>
-                            <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-700">
+                            <span className="rounded-full bg-blue-100 dark:bg-blue-950/80 px-2 py-0.5 text-[10px] font-semibold text-blue-700 dark:text-blue-300">
                               {adm.status || "Admitted"}
                             </span>
                           </div>
-                          <p className="text-slate-500 mt-1">
+                          <p className="text-slate-500 dark:text-slate-400 mt-1">
                             Admitted on: {formatDate(adm.admission_date)}
                             {adm.discharge_date && ` • Discharged: ${formatDate(adm.discharge_date)}`}
                           </p>
@@ -1222,11 +1255,11 @@ export default function PatientsPage() {
             </div>
 
             {/* Modal Actions */}
-            <div className="flex items-center justify-between border-t border-slate-100 pt-4">
+            <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-4">
               <button
                 type="button"
                 onClick={() => handleOpenDelete(viewPatient)}
-                className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/60 transition-colors"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -1249,11 +1282,11 @@ export default function PatientsPage() {
                 <button
                   type="button"
                   onClick={() => handleOpenEdit(viewPatient)}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-750 px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 text-slate-500"
+                    className="h-4 w-4 text-slate-500 dark:text-slate-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -1271,7 +1304,7 @@ export default function PatientsPage() {
                 <button
                   type="button"
                   onClick={() => setViewPatient(null)}
-                  className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors"
+                  className="rounded-xl bg-slate-900 dark:bg-slate-800 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
                 >
                   Close
                 </button>
@@ -1288,21 +1321,21 @@ export default function PatientsPage() {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-200"
         >
-          <div className="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl transition-all">
+          <div className="relative w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-2xl transition-all border border-slate-100 dark:border-slate-800">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Edit Patient Profile</h3>
-                <p className="text-xs text-slate-500">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Edit Patient Profile</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Update demographics and contact details for {editPatient.name}.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setEditPatient(null)}
-                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300"
               >
                 &times;
               </button>
@@ -1310,7 +1343,7 @@ export default function PatientsPage() {
 
             {/* Error */}
             {editError && (
-              <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+              <div className="mt-4 rounded-xl border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/40 p-3 text-xs text-red-700 dark:text-red-300">
                 {editError}
               </div>
             )}
@@ -1318,7 +1351,7 @@ export default function PatientsPage() {
             {/* Form */}
             <form onSubmit={handleEditSubmit} className="mt-4 space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   Full Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -1326,13 +1359,13 @@ export default function PatientsPage() {
                   required
                   value={editForm.name}
                   onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-750 bg-white dark:bg-slate-850 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 />
               </div>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                     Date of Birth <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -1341,19 +1374,19 @@ export default function PatientsPage() {
                     max={new Date().toISOString().split("T")[0]}
                     value={editForm.date_of_birth}
                     onChange={(e) => setEditForm({ ...editForm, date_of_birth: e.target.value })}
-                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-750 bg-white dark:bg-slate-850 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                     Gender <span className="text-red-500">*</span>
                   </label>
                   <select
                     required
                     value={editForm.gender}
                     onChange={(e) => setEditForm({ ...editForm, gender: e.target.value })}
-                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-750 bg-white dark:bg-slate-850 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                   >
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
@@ -1363,7 +1396,7 @@ export default function PatientsPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   Phone Number <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -1371,12 +1404,12 @@ export default function PatientsPage() {
                   required
                   value={editForm.phone_number}
                   onChange={(e) => setEditForm({ ...editForm, phone_number: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-750 bg-white dark:bg-slate-850 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   Residential Address <span className="text-red-500">*</span>
                 </label>
                 <textarea
@@ -1384,17 +1417,17 @@ export default function PatientsPage() {
                   rows={3}
                   value={editForm.address}
                   onChange={(e) => setEditForm({ ...editForm, address: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-750 bg-white dark:bg-slate-850 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 />
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setEditPatient(null)}
                   disabled={isUpdating}
-                  className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+                  className="rounded-xl border border-slate-200 dark:border-slate-750 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   Cancel
                 </button>

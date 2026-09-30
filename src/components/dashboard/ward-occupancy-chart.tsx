@@ -42,28 +42,28 @@ export function WardOccupancyChart({
         regex: /general/i,
         color: "#3B82F6", // blue-500
         hoverColor: "#1D4ED8",
-        bgBadge: "bg-blue-50 text-blue-700 border-blue-200",
+        bgBadge: "bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/60",
       },
       {
         name: "Private Suites",
         regex: /private|suite/i,
         color: "#6366F1", // indigo-500
         hoverColor: "#4338CA",
-        bgBadge: "bg-indigo-50 text-indigo-700 border-indigo-200",
+        bgBadge: "bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/60",
       },
       {
         name: "ICU & Critical Care",
         regex: /icu|critical|intensive/i,
         color: "#F43F5E", // rose-500
         hoverColor: "#BE123C",
-        bgBadge: "bg-rose-50 text-rose-700 border-rose-200",
+        bgBadge: "bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60",
       },
       {
         name: "Emergency & Triage",
         regex: /emergency|isolation/i,
         color: "#10B981", // emerald-500
         hoverColor: "#047857",
-        bgBadge: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        bgBadge: "bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60",
       },
     ];
 
@@ -97,7 +97,6 @@ export function WardOccupancyChart({
 
   // Calculate SVG stroke dashes for each category
   const slicesWithOffsets = useMemo(() => {
-    // If no rooms, render placeholder
     const sum = categories.reduce((acc, c) => acc + (c.total || 1), 0);
     let cumulative = 0;
 
@@ -120,36 +119,36 @@ export function WardOccupancyChart({
     : null;
 
   return (
-    <div className="rounded-2xl border border-slate-200/80 bg-white/95 p-6 shadow-xs backdrop-blur-xs transition-all duration-300 hover:shadow-md hover:border-indigo-200 flex flex-col justify-between">
+    <div className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white/95 dark:bg-slate-900/90 p-6 shadow-xs backdrop-blur-xs transition-all duration-300 hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-800/60 flex flex-col justify-between">
       {/* Header */}
-      <div className="border-b border-slate-100 pb-4 mb-4">
+      <div className="border-b border-slate-100 dark:border-slate-800 pb-4 mb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse-emerald" />
-            <h3 className="text-base font-bold text-slate-900 tracking-tight">
+            <h3 className="text-base font-extrabold text-slate-900 dark:text-white tracking-tight">
               Ward Capacity & Bed Load
             </h3>
           </div>
           <span
             className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-bold border ${
               overallOccupancy > 85
-                ? "bg-rose-50 text-rose-700 border-rose-200"
+                ? "bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/60"
                 : overallOccupancy > 60
-                ? "bg-amber-50 text-amber-700 border-amber-200"
-                : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                ? "bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60"
+                : "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60"
             }`}
           >
             {overallOccupancy}% Active
           </span>
         </div>
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
           Distribution of hospital beds and real-time census by department unit
         </p>
       </div>
 
       {isLoading ? (
         <div className="py-16 flex flex-col items-center justify-center gap-3 text-slate-400">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-indigo-600 dark:border-indigo-400 border-t-transparent" />
           <span className="text-xs">Computing ward analytics...</span>
         </div>
       ) : (
@@ -169,6 +168,7 @@ export function WardOccupancyChart({
                 r={radius}
                 fill="transparent"
                 stroke="#F1F5F9"
+                className="stroke-slate-100 dark:stroke-slate-800"
                 strokeWidth={strokeWidth}
               />
 
@@ -199,25 +199,25 @@ export function WardOccupancyChart({
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
               {activeCategory ? (
                 <div className="animate-fade-in px-4">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block leading-tight">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block leading-tight">
                     {activeCategory.name}
                   </span>
-                  <span className="text-2xl font-extrabold text-slate-900 block leading-tight mt-0.5">
+                  <span className="text-2xl font-extrabold text-slate-900 dark:text-white block leading-tight mt-0.5">
                     {activeCategory.occupied}/{activeCategory.total}
                   </span>
-                  <span className="text-[11px] font-semibold text-indigo-600 block leading-tight">
+                  <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 block leading-tight">
                     {activeCategory.occupancyRate}% Bed Load
                   </span>
                 </div>
               ) : (
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block leading-tight">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block leading-tight">
                     Census
                   </span>
-                  <span className="text-3xl font-extrabold tracking-tight text-slate-900 block leading-tight">
+                  <span className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white block leading-tight">
                     {overallOccupancy}%
                   </span>
-                  <span className="text-[11px] font-medium text-emerald-600 block leading-tight mt-0.5">
+                  <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 block leading-tight mt-0.5">
                     {totalAvailable} Free Beds
                   </span>
                 </div>
@@ -236,8 +236,8 @@ export function WardOccupancyChart({
                   onMouseLeave={() => setHoveredSlice(null)}
                   className={`flex items-center justify-between p-2 rounded-xl border transition-all duration-200 cursor-pointer ${
                     isHovered
-                      ? "bg-slate-50 border-slate-300 shadow-2xs translate-x-1"
-                      : "border-slate-100 hover:bg-slate-50/60"
+                      ? "bg-slate-50 dark:bg-slate-800 border-slate-300 dark:border-slate-700 shadow-2xs translate-x-1"
+                      : "border-slate-100 dark:border-slate-800 hover:bg-slate-50/60 dark:hover:bg-slate-800/40"
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
@@ -245,13 +245,13 @@ export function WardOccupancyChart({
                       className="h-3 w-3 rounded-full shrink-0 shadow-2xs"
                       style={{ backgroundColor: cat.color }}
                     />
-                    <span className="text-xs font-semibold text-slate-800">
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
                       {cat.name}
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono font-medium text-slate-600">
+                    <span className="text-xs font-mono font-medium text-slate-600 dark:text-slate-400">
                       {cat.occupied}/{cat.total}
                     </span>
                     <span
@@ -266,11 +266,11 @@ export function WardOccupancyChart({
           </div>
 
           {/* Quick Status Note */}
-          <div className="w-full mt-4 rounded-xl bg-slate-50/80 p-3 border border-slate-100 text-xs text-slate-600">
+          <div className="w-full mt-4 rounded-xl bg-slate-50/80 dark:bg-slate-800/60 p-3 border border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300">
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
               <p>
-                <strong className="text-slate-900 font-semibold">
+                <strong className="text-slate-900 dark:text-white font-bold">
                   {totalAvailable} of {totalRooms} rooms available
                 </strong>{" "}
                 for immediate patient intake and triage.

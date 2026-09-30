@@ -143,9 +143,9 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
   ];
 
   return (
-    <aside className="flex h-full w-64 flex-col border-r border-slate-200/80 bg-white/95 backdrop-blur-md select-none">
+    <aside className="flex h-full w-64 flex-col border-r border-slate-200/80 dark:border-slate-800/80 bg-white/95 dark:bg-[#0E1526]/95 backdrop-blur-md select-none transition-colors">
       {/* Brand Header */}
-      <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200/80 px-5">
+      <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200/80 dark:border-slate-800/80 px-5">
         <Link
           href="/dashboard"
           onClick={onCloseMobile}
@@ -167,14 +167,14 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-sm font-extrabold tracking-tight text-slate-900 block leading-tight">
+              <span className="text-sm font-extrabold tracking-tight text-slate-900 dark:text-white block leading-tight">
                 {APP_CONFIG.name}
               </span>
-              <span className="rounded bg-indigo-50 px-1.5 py-0.2 text-[9px] font-extrabold text-indigo-700 border border-indigo-200">
+              <span className="rounded bg-indigo-50 dark:bg-indigo-950/80 px-1.5 py-0.2 text-[9px] font-extrabold text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
                 PRO
               </span>
             </div>
-            <span className="text-[11px] font-semibold text-slate-400 block leading-tight">
+            <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 block leading-tight">
               Clinical Command
             </span>
           </div>
@@ -184,7 +184,7 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
           <button
             type="button"
             onClick={onCloseMobile}
-            className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-600 lg:hidden cursor-pointer"
+            className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-300 lg:hidden cursor-pointer"
             aria-label="Close sidebar"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -198,7 +198,7 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
       <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
         {navSections.map((section) => (
           <div key={section.title}>
-            <p className="px-3 mb-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+            <p className="px-3 mb-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">
               {section.title}
             </p>
             <nav className="space-y-1">
@@ -212,8 +212,8 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
                     onClick={onCloseMobile}
                     className={`relative flex items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold transition-all duration-200 ${
                       isActive
-                        ? "bg-gradient-to-r from-indigo-50/90 to-blue-50/50 text-indigo-700 shadow-2xs font-bold"
-                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                        ? "bg-gradient-to-r from-indigo-50/90 to-blue-50/50 dark:from-indigo-950/70 dark:to-blue-950/40 text-indigo-700 dark:text-indigo-300 shadow-2xs font-bold"
+                        : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white"
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -225,8 +225,8 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
                       <span
                         className={`shrink-0 transition-colors ${
                           isActive
-                            ? "text-indigo-600"
-                            : "text-slate-400 group-hover:text-slate-600"
+                            ? "text-indigo-600 dark:text-indigo-400"
+                            : "text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300"
                         }`}
                       >
                         {item.icon}
@@ -239,7 +239,7 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
                         className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
                           isActive
                             ? "bg-indigo-600 text-white"
-                            : "bg-slate-100 text-slate-500"
+                            : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
                         }`}
                       >
                         {item.badge}
@@ -254,22 +254,22 @@ export function Sidebar({ onCloseMobile }: SidebarProps) {
       </div>
 
       {/* Bottom Node Widget: System Health & Logout */}
-      <div className="border-t border-slate-200/80 p-3 space-y-2">
-        <div className="rounded-xl bg-slate-50 p-2.5 border border-slate-100 text-[11px] text-slate-500">
+      <div className="border-t border-slate-200/80 dark:border-slate-800/80 p-3 space-y-2">
+        <div className="rounded-xl bg-slate-50 dark:bg-slate-900/80 p-2.5 border border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400">
           <div className="flex items-center justify-between font-semibold">
-            <span className="flex items-center gap-1.5 text-slate-700">
+            <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse-emerald" />
               HMS Cloud Node
             </span>
-            <span className="text-[10px] text-emerald-600 font-mono">24ms</span>
+            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono">24ms</span>
           </div>
-          <p className="text-[10px] text-slate-400 mt-0.5">Encrypted EHR Sync v2.4</p>
+          <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">Encrypted EHR Sync v2.4</p>
         </div>
 
         <button
           type="button"
           onClick={handleLogout}
-          className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition-colors cursor-pointer"
+          className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 shrink-0 text-slate-400 group-hover:text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

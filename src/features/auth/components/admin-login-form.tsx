@@ -123,10 +123,10 @@ export function AdminLoginForm() {
         <div
           role="alert"
           aria-live="polite"
-          className="flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 p-3.5 text-sm text-red-600"
+          className="flex items-start gap-2.5 rounded-xl border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/40 p-3.5 text-sm text-red-600 dark:text-red-300"
         >
           <svg
-            className="h-5 w-5 shrink-0 text-red-600 mt-0.5"
+            className="h-5 w-5 shrink-0 text-red-600 dark:text-red-400 mt-0.5"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -146,10 +146,10 @@ export function AdminLoginForm() {
       {successMessage && (
         <div
           role="status"
-          className="flex items-start gap-2.5 rounded-lg border border-emerald-200 bg-emerald-50 p-3.5 text-sm text-emerald-700"
+          className="flex items-start gap-2.5 rounded-xl border border-emerald-200 dark:border-emerald-800/60 bg-emerald-50 dark:bg-emerald-950/40 p-3.5 text-sm text-emerald-700 dark:text-emerald-300"
         >
           <svg
-            className="h-5 w-5 shrink-0 text-emerald-600 mt-0.5"
+            className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400 mt-0.5"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -195,7 +195,7 @@ export function AdminLoginForm() {
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="flex h-9 w-9 items-center justify-center rounded-md text-slate-500 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? (
@@ -254,9 +254,9 @@ export function AdminLoginForm() {
             checked={rememberMe}
             onChange={(e) => setRememberMe(e.target.checked)}
             disabled={isLoading}
-            className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600 cursor-pointer"
+            className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-blue-600 focus:ring-blue-600 bg-white dark:bg-slate-900 cursor-pointer"
           />
-          <span className="text-sm text-slate-600">Remember this device</span>
+          <span className="text-sm text-slate-600 dark:text-slate-400">Remember this device</span>
         </label>
       </div>
 
@@ -269,7 +269,7 @@ export function AdminLoginForm() {
           size="lg"
           isLoading={isLoading}
           disabled={isLoading}
-          className="w-full text-base font-semibold"
+          className="w-full text-base font-semibold shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40"
         >
           Sign In
         </Button>

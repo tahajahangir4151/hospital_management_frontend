@@ -596,37 +596,37 @@ export default function RoomsPage() {
       {/* Metric Summary Cards with Sparklines */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Rooms */}
-        <div className="relative overflow-hidden flex items-center justify-between rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-blue-200">
+        <div className="relative overflow-hidden flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900/90 p-5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-800/60">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-600" />
           <div className="flex items-center gap-3.5">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 shadow-2xs">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 shadow-2xs">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
               </svg>
             </div>
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Rooms</p>
-              <p className="text-2xl font-extrabold tracking-tight text-slate-900 mt-0.5">{metrics.total}</p>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Total Rooms</p>
+              <p className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white mt-0.5">{metrics.total}</p>
             </div>
           </div>
           <Sparkline data={[10, 11, 13, 12, 14, 15, metrics.total || 16]} color="blue" height={32} width={74} />
         </div>
 
         {/* ICU / Critical Care */}
-        <div className="relative overflow-hidden flex items-center justify-between rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-rose-200">
+        <div className="relative overflow-hidden flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900/90 p-5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-rose-200 dark:hover:border-rose-800/60">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 to-pink-600" />
           <div className="flex items-center gap-3.5">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-50 text-rose-600 shadow-2xs">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 shadow-2xs">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </div>
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">ICU & Critical</p>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">ICU & Critical</p>
               <div className="mt-0.5 flex items-baseline gap-1.5">
-                <span className="text-2xl font-extrabold tracking-tight text-slate-900">{metrics.icuCount}</span>
+                <span className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">{metrics.icuCount}</span>
                 {metrics.total > 0 && (
-                  <span className="text-[11px] font-bold text-rose-600">
+                  <span className="text-[11px] font-bold text-rose-600 dark:text-rose-400">
                     {Math.round((metrics.icuCount / metrics.total) * 100)}%
                   </span>
                 )}
@@ -637,34 +637,34 @@ export default function RoomsPage() {
         </div>
 
         {/* Private Suites */}
-        <div className="relative overflow-hidden flex items-center justify-between rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-200">
+        <div className="relative overflow-hidden flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900/90 p-5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-200 dark:hover:border-indigo-800/60">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-600" />
           <div className="flex items-center gap-3.5">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 shadow-2xs">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 shadow-2xs">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
               </svg>
             </div>
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Private Suites</p>
-              <p className="text-2xl font-extrabold tracking-tight text-slate-900 mt-0.5">{metrics.privateCount}</p>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Private Suites</p>
+              <p className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white mt-0.5">{metrics.privateCount}</p>
             </div>
           </div>
           <Sparkline data={[4, 5, 5, 6, 7, 7, metrics.privateCount || 8]} color="indigo" height={32} width={74} />
         </div>
 
         {/* Avg Daily Tariff */}
-        <div className="relative overflow-hidden flex items-center justify-between rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-emerald-200">
+        <div className="relative overflow-hidden flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900/90 p-5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-800/60">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-600" />
           <div className="flex items-center gap-3.5">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 shadow-2xs">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 shadow-2xs">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Avg. Tariff / Day</p>
-              <p className="text-2xl font-extrabold tracking-tight text-slate-900 mt-0.5">{formatCurrency(metrics.avgDailyRate)}</p>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Avg. Tariff / Day</p>
+              <p className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white mt-0.5">{formatCurrency(metrics.avgDailyRate)}</p>
             </div>
           </div>
           <Sparkline data={[4500, 5200, 5000, 5800, 6000, metrics.avgDailyRate || 6200]} color="emerald" height={32} width={74} />
@@ -672,19 +672,19 @@ export default function RoomsPage() {
       </div>
 
       {/* Interactive Ward Distribution Graph & Fast Filter Bar */}
-      <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs backdrop-blur-xs transition-all hover:border-indigo-200">
+      <div className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900/90 p-5 shadow-xs backdrop-blur-xs transition-all hover:border-indigo-200 dark:hover:border-indigo-800/60">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Ward Capacity Distribution
             </h4>
-            <p className="text-xs text-slate-400">Click any ward type below to instantly filter rooms</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">Click any ward type below to instantly filter rooms</p>
           </div>
           {typeFilter !== "all" && (
             <button
               type="button"
               onClick={() => setTypeFilter("all")}
-              className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors cursor-pointer"
+              className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline transition-colors cursor-pointer"
             >
               Clear Filter (Showing all {rooms.length} rooms)
             </button>
@@ -692,7 +692,7 @@ export default function RoomsPage() {
         </div>
 
         {/* Multi-segmented Distribution Progress Bar */}
-        <div className="h-3 w-full rounded-full bg-slate-100 overflow-hidden flex gap-0.5 p-0.5">
+        <div className="h-3 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden flex gap-0.5 p-0.5">
           {metrics.typeBreakdown.map((item) => {
             if (item.count === 0) return null;
             const bg =
@@ -724,8 +724,8 @@ export default function RoomsPage() {
             onClick={() => setTypeFilter("all")}
             className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
               typeFilter === "all"
-                ? "bg-slate-900 text-white shadow-2xs"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                ? "bg-slate-900 dark:bg-indigo-600 text-white shadow-2xs"
+                : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
             }`}
           >
             All Wards ({rooms.length})
@@ -740,13 +740,13 @@ export default function RoomsPage() {
                 className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
                   isSelected
                     ? "bg-indigo-600 text-white shadow-xs font-bold"
-                    : "bg-slate-50 text-slate-600 border border-slate-200/80 hover:bg-slate-100"
+                    : "bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700"
                 }`}
               >
                 <span>{item.type}</span>
                 <span
                   className={`rounded-full px-1.5 py-0.2 text-[10px] font-bold ${
-                    isSelected ? "bg-white/20 text-white" : "bg-slate-200 text-slate-700"
+                    isSelected ? "bg-white/20 text-white" : "bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300"
                   }`}
                 >
                   {item.count}
@@ -885,7 +885,7 @@ export default function RoomsPage() {
             return (
               <div
                 key={room.id}
-                className={`relative flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white/95 backdrop-blur-xs p-5 shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-indigo-900/5 ${styles.cardBorder} group`}
+                className={`relative flex flex-col justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white/95 dark:bg-slate-900/90 backdrop-blur-xs p-5 shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-indigo-900/5 ${styles.cardBorder} group`}
               >
                 {/* Top Row: Room Number & Type Badge */}
                 <div>
@@ -913,11 +913,11 @@ export default function RoomsPage() {
                         <button
                           type="button"
                           onClick={() => handleOpenView(room)}
-                          className="text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors text-left"
+                          className="text-lg font-bold text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-left cursor-pointer"
                         >
                           Room #{room.room_number}
                         </button>
-                        <p className="font-mono text-[11px] text-slate-400">
+                        <p className="font-mono text-[11px] text-slate-400 dark:text-slate-500">
                           ID: {room.id.slice(0, 8)}...
                         </p>
                       </div>
@@ -932,28 +932,28 @@ export default function RoomsPage() {
                   </div>
 
                   {/* Daily Charge */}
-                  <div className="mt-4 rounded-xl bg-slate-50/80 p-3 border border-slate-100">
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                  <div className="mt-4 rounded-xl bg-slate-50/80 dark:bg-slate-800/60 p-3 border border-slate-100 dark:border-slate-800">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                       Daily Accommodation Charge
                     </p>
                     <div className="mt-1 flex items-baseline justify-between">
-                      <span className="text-lg font-bold text-slate-900">
+                      <span className="text-lg font-extrabold text-slate-900 dark:text-white">
                         {formatCurrency(room.daily_charge)}
                       </span>
-                      <span className="text-xs text-slate-500 font-medium">per day</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">per day</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Bottom Row: Creation Date & Quick Actions */}
-                <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-slate-500">
+                <div className="mt-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-3 text-xs text-slate-500 dark:text-slate-400">
                   <span>Created {formatDate(room.created_at)}</span>
 
                   <div className="flex items-center gap-1">
                     <button
                       type="button"
                       onClick={() => handleOpenView(room)}
-                      className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+                      className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
                       title="View details & occupants"
                       aria-label={`View Room ${room.room_number}`}
                     >

@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #F8FAFC;
   --foreground: #0F172A;
@@ -7,6 +9,15 @@
   --primary-glow: rgba(79, 70, 229, 0.15);
   --teal-glow: rgba(13, 148, 136, 0.15);
   --emerald-glow: rgba(16, 185, 129, 0.15);
+}
+
+.dark {
+  --background: #0B0F19;
+  --foreground: #F8FAFC;
+  --primary: #6366F1;
+  --primary-glow: rgba(99, 102, 241, 0.25);
+  --teal-glow: rgba(20, 184, 166, 0.25);
+  --emerald-glow: rgba(16, 185, 129, 0.25);
 }
 
 @theme inline {
@@ -18,15 +29,29 @@
 
 /* Base Body with Subtle Ambient Mesh Glow */
 body {
+  background-color: var(--background);
+  color: var(--foreground);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+html:not(.dark) body {
   background-color: #F8FAFC;
   background-image: 
     radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.035) 0px, transparent 50%),
     radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.035) 0px, transparent 50%),
     radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.02) 0px, transparent 50%);
   background-attachment: fixed;
-  color: #0F172A;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
+}
+
+html.dark body {
+  background-color: #0B0F19;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.06) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.04) 0px, transparent 50%);
+  background-attachment: fixed;
 }
 
 /* Custom Sleek Scrollbar */
@@ -43,6 +68,13 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #94A3B8;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }
 
 /* Keyframe Animations */

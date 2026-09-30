@@ -16,6 +16,7 @@ import {
   Toast,
   ToastNotification,
 } from "@/components/common";
+import { Sparkline } from "@/components/dashboard/sparkline";
 
 export default function AdmissionsPage() {
   const cachedAdmissions = admissionService.getCachedAdmissions();
@@ -447,14 +448,14 @@ export default function AdmissionsPage() {
                   className={`inline-flex items-center rounded-md px-2 py-0.2 text-[10px] font-semibold ${
                     adm.room.type.toLowerCase().includes("icu")
                       ? "bg-rose-50 text-rose-700 border border-rose-200"
-                      : "bg-indigo-50 text-indigo-700 border border-indigo-200"
+                      : "bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60"
                   }`}
                 >
                   {adm.room.type}
                 </span>
               )}
             </div>
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-400 dark:text-slate-500">
               {formatCurrency(adm.room?.daily_charge)} / day
             </span>
           </div>
@@ -464,10 +465,10 @@ export default function AdmissionsPage() {
         header: "Admission Date",
         render: (adm) => (
           <div className="flex flex-col">
-            <span className="font-medium text-slate-900">
+            <span className="font-medium text-slate-900 dark:text-white">
               {formatDate(adm.admission_date)}
             </span>
-            <span className="text-[11px] text-slate-400">
+            <span className="text-[11px] text-slate-400 dark:text-slate-500">
               {formatDateTime(adm.admission_date).split(",")[1]?.trim()}
             </span>
           </div>
@@ -479,11 +480,11 @@ export default function AdmissionsPage() {
           const stayInfo = calculateStayDuration(adm.admission_date, adm.discharge_date);
           return (
             <div className="flex flex-col">
-              <span className="font-semibold text-slate-800 text-xs">
+              <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs">
                 {stayInfo.label}
               </span>
               {adm.room?.daily_charge && (
-                <span className="text-[11px] text-slate-500">
+                <span className="text-[11px] text-slate-500 dark:text-slate-400">
                   Est. {formatCurrency(stayInfo.days * adm.room.daily_charge)}
                 </span>
               )}
@@ -496,16 +497,16 @@ export default function AdmissionsPage() {
         render: (adm) => {
           const isActive = !adm.discharge_date;
           return isActive ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200/60">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
               Active Inpatient
             </span>
           ) : (
             <div className="flex flex-col">
-              <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 w-fit">
+              <span className="inline-flex items-center rounded-full bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:text-slate-300 w-fit">
                 Discharged
               </span>
-              <span className="text-[10px] text-slate-400 mt-0.5">
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
                 {formatDate(adm.discharge_date)}
               </span>
             </div>
@@ -523,7 +524,7 @@ export default function AdmissionsPage() {
                 <button
                   type="button"
                   onClick={() => handleOpenDischarge(adm)}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-100 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/60 px-3 py-1.5 text-xs font-semibold text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-colors cursor-pointer"
                   title="Discharge patient"
                 >
                   <svg
@@ -547,7 +548,7 @@ export default function AdmissionsPage() {
               <button
                 type="button"
                 onClick={() => setViewAdmission(adm)}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors cursor-pointer"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
                 title="View dossier"
                 aria-label={`View admission details for ${adm.patient?.name || adm.id}`}
               >
@@ -606,115 +607,149 @@ export default function AdmissionsPage() {
       {/* Metric Summary Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Active Inpatients */}
-        <div className="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all hover:shadow-sm">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.8}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-              />
-            </svg>
+        <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-5 shadow-xs transition-all hover:shadow-md hover:border-emerald-500/40 dark:hover:border-emerald-500/40">
+          <div className="flex items-start justify-between">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 group-hover:scale-105 transition-transform">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                />
+              </svg>
+            </div>
+            <Sparkline
+              data={[Math.max(1, metrics.active * 0.7), metrics.active * 0.85, metrics.active * 0.8, metrics.active * 0.95, metrics.active]}
+              color="#10b981"
+              width={76}
+              height={32}
+            />
           </div>
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
+          <div className="mt-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Active Inpatients
             </p>
-            <div className="mt-0.5 flex items-baseline gap-2">
-              <span className="text-2xl font-bold tracking-tight text-slate-900">
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
                 {metrics.active}
               </span>
-              <span className="text-xs font-semibold text-emerald-600">Bed Occupied</span>
+              <span className="rounded-full bg-emerald-100 dark:bg-emerald-950/80 px-2 py-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                Live Occupancy
+              </span>
             </div>
           </div>
         </div>
 
         {/* Total Admissions */}
-        <div className="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all hover:shadow-sm">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.8}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-              />
-            </svg>
+        <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-5 shadow-xs transition-all hover:shadow-md hover:border-blue-500/40 dark:hover:border-blue-500/40">
+          <div className="flex items-start justify-between">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 group-hover:scale-105 transition-transform">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                />
+              </svg>
+            </div>
+            <Sparkline
+              data={[metrics.total * 0.78, metrics.total * 0.84, metrics.total * 0.89, metrics.total * 0.94, metrics.total]}
+              color="#3b82f6"
+              width={76}
+              height={32}
+            />
           </div>
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
+          <div className="mt-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Lifetime Admissions
             </p>
-            <p className="mt-0.5 text-2xl font-bold tracking-tight text-slate-900">
+            <p className="mt-1 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
               {metrics.total}
             </p>
           </div>
         </div>
 
         {/* Discharged Patients */}
-        <div className="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all hover:shadow-sm">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.8}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-              />
-            </svg>
+        <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-5 shadow-xs transition-all hover:shadow-md hover:border-indigo-500/40 dark:hover:border-indigo-500/40">
+          <div className="flex items-start justify-between">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 group-hover:scale-105 transition-transform">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
+              </svg>
+            </div>
+            <Sparkline
+              data={[metrics.discharged * 0.7, metrics.discharged * 0.8, metrics.discharged * 0.88, metrics.discharged * 0.94, metrics.discharged]}
+              color="#6366f1"
+              width={76}
+              height={32}
+            />
           </div>
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
+          <div className="mt-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Discharged Stays
             </p>
-            <p className="mt-0.5 text-2xl font-bold tracking-tight text-slate-900">
+            <p className="mt-1 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
               {metrics.discharged}
             </p>
           </div>
         </div>
 
         {/* Active Daily Inpatient Revenue */}
-        <div className="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all hover:shadow-sm">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.8}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
+        <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-5 shadow-xs transition-all hover:shadow-md hover:border-amber-500/40 dark:hover:border-amber-500/40">
+          <div className="flex items-start justify-between">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 group-hover:scale-105 transition-transform">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <Sparkline
+              data={[metrics.activeDailyRevenue * 0.8, metrics.activeDailyRevenue * 0.9, metrics.activeDailyRevenue * 0.85, metrics.activeDailyRevenue * 0.95, metrics.activeDailyRevenue]}
+              color="#f59e0b"
+              width={76}
+              height={32}
+            />
           </div>
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
+          <div className="mt-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Active Daily Billing
             </p>
-            <p className="mt-0.5 text-2xl font-bold tracking-tight text-slate-900">
+            <p className="mt-1 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
               {formatCurrency(metrics.activeDailyRevenue)}
             </p>
           </div>
@@ -825,21 +860,21 @@ export default function AdmissionsPage() {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-200"
         >
-          <div className="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl transition-all">
+          <div className="relative w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-2xl transition-all border border-slate-100 dark:border-slate-800">
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Admit Patient to Room</h3>
-                <p className="text-xs text-slate-500">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Admit Patient to Room</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Assign an active inpatient admission to an available hospital room.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setIsAdmitOpen(false)}
-                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300"
               >
                 &times;
               </button>
@@ -847,7 +882,7 @@ export default function AdmissionsPage() {
 
             {/* Error in modal */}
             {admitError && (
-              <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+              <div className="mt-4 rounded-xl border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/40 p-3 text-xs text-red-700 dark:text-red-300">
                 {admitError}
               </div>
             )}
@@ -856,14 +891,14 @@ export default function AdmissionsPage() {
             <form onSubmit={handleAdmitSubmit} className="mt-4 space-y-4">
               {/* Select Patient */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   Select Patient <span className="text-red-500">*</span>
                 </label>
                 <select
                   required
                   value={admitForm.patient_id}
                   onChange={(e) => setAdmitForm({ ...admitForm, patient_id: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-750 bg-white dark:bg-slate-850 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 >
                   <option value="" disabled>
                     -- Choose Patient --
@@ -875,7 +910,7 @@ export default function AdmissionsPage() {
                         key={p.id}
                         value={p.id}
                         disabled={isAlreadyAdmitted}
-                        className={isAlreadyAdmitted ? "text-slate-400" : "text-slate-900"}
+                        className={isAlreadyAdmitted ? "text-slate-400 dark:text-slate-500" : "text-slate-900 dark:text-white dark:bg-slate-850"}
                       >
                         {p.name} ({p.gender}, {p.phone_number})
                         {isAlreadyAdmitted ? " [Currently Admitted]" : ""}
@@ -883,21 +918,21 @@ export default function AdmissionsPage() {
                     );
                   })}
                 </select>
-                <p className="mt-1 text-[11px] text-slate-400">
+                <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">
                   Patients with an active admission cannot be assigned to another room until discharged.
                 </p>
               </div>
 
               {/* Select Room */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   Select Room / Ward <span className="text-red-500">*</span>
                 </label>
                 <select
                   required
                   value={admitForm.room_id}
                   onChange={(e) => setAdmitForm({ ...admitForm, room_id: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-750 bg-white dark:bg-slate-850 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 >
                   <option value="" disabled>
                     -- Choose Room --
@@ -912,7 +947,7 @@ export default function AdmissionsPage() {
                         key={r.id}
                         value={r.id}
                         disabled={isOccupied}
-                        className={isOccupied ? "text-slate-400" : "text-slate-900"}
+                        className={isOccupied ? "text-slate-400 dark:text-slate-500" : "text-slate-900 dark:text-white dark:bg-slate-850"}
                       >
                         Room #{r.room_number} — {r.type} ({formatCurrency(r.daily_charge)}/day)
                         {isOccupied ? " [Occupied]" : isGeneral ? ` (${occupantCount} patients)` : " [Available]"}
@@ -924,27 +959,27 @@ export default function AdmissionsPage() {
 
               {/* Admission Date/Time */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   Admission Date & Time
                 </label>
                 <input
                   type="datetime-local"
                   value={admitForm.admission_date}
                   onChange={(e) => setAdmitForm({ ...admitForm, admission_date: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-750 bg-white dark:bg-slate-850 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 />
-                <p className="mt-1 text-[11px] text-slate-400">
+                <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">
                   Defaults to current timestamp if left unchanged.
                 </p>
               </div>
 
               {/* Actions */}
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setIsAdmitOpen(false)}
                   disabled={isAdmitting}
-                  className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+                  className="rounded-xl border border-slate-200 dark:border-slate-750 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   Cancel
                 </button>
@@ -976,11 +1011,11 @@ export default function AdmissionsPage() {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-200"
         >
-          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl transition-all">
-            <div className="flex items-center gap-3.5 text-rose-600">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-100">
+          <div className="relative w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-2xl transition-all border border-slate-100 dark:border-slate-800">
+            <div className="flex items-center gap-3.5 text-rose-600 dark:text-rose-400">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-100 dark:bg-rose-950/80">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-6 w-6"
@@ -997,46 +1032,46 @@ export default function AdmissionsPage() {
                 </svg>
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-900">Discharge Patient?</h3>
-                <p className="text-xs text-slate-500">Record final release and free the room.</p>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">Discharge Patient?</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Record final release and free the room.</p>
               </div>
             </div>
 
             {dischargeError && (
-              <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+              <div className="mt-4 rounded-xl border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/40 p-3 text-xs text-red-700 dark:text-red-300">
                 {dischargeError}
               </div>
             )}
 
-            <div className="mt-4 space-y-3 rounded-xl border border-slate-100 bg-slate-50/70 p-3.5 text-xs">
+            <div className="mt-4 space-y-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/80 p-3.5 text-xs">
               <div className="flex justify-between">
-                <span className="text-slate-500">Patient:</span>
-                <span className="font-semibold text-slate-900">
+                <span className="text-slate-500 dark:text-slate-400">Patient:</span>
+                <span className="font-semibold text-slate-900 dark:text-white">
                   {dischargeTarget.patient?.name || "Patient"}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Assigned Room:</span>
-                <span className="font-semibold text-slate-900">
+                <span className="text-slate-500 dark:text-slate-400">Assigned Room:</span>
+                <span className="font-semibold text-slate-900 dark:text-white">
                   Room #{dischargeTarget.room?.room_number} ({dischargeTarget.room?.type})
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Admitted On:</span>
-                <span className="font-semibold text-slate-900">
+                <span className="text-slate-500 dark:text-slate-400">Admitted On:</span>
+                <span className="font-semibold text-slate-900 dark:text-white">
                   {formatDateTime(dischargeTarget.admission_date)}
                 </span>
               </div>
-              <div className="flex justify-between border-t border-slate-200/80 pt-2">
-                <span className="text-slate-500">Total Stay:</span>
-                <span className="font-semibold text-emerald-700">
+              <div className="flex justify-between border-t border-slate-200/80 dark:border-slate-800 pt-2">
+                <span className="text-slate-500 dark:text-slate-400">Total Stay:</span>
+                <span className="font-semibold text-emerald-700 dark:text-emerald-300">
                   {calculateStayDuration(dischargeTarget.admission_date).label}
                 </span>
               </div>
               {dischargeTarget.room?.daily_charge && (
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Est. Accommodation Fee:</span>
-                  <span className="font-bold text-slate-900">
+                  <span className="text-slate-500 dark:text-slate-400">Est. Accommodation Fee:</span>
+                  <span className="font-bold text-slate-900 dark:text-white">
                     {formatCurrency(
                       calculateStayDuration(dischargeTarget.admission_date).days *
                         dischargeTarget.room.daily_charge
@@ -1046,17 +1081,17 @@ export default function AdmissionsPage() {
               )}
             </div>
 
-            <p className="mt-3 text-xs text-slate-500">
+            <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
               This action will stamp the discharge date with current timestamp and make Room #
               {dischargeTarget.room?.room_number} available for new admissions.
             </p>
 
-            <div className="flex items-center justify-end gap-3 pt-5 border-t border-slate-100 mt-5">
+            <div className="flex items-center justify-end gap-3 pt-5 border-t border-slate-100 dark:border-slate-800 mt-5">
               <button
                 type="button"
                 onClick={() => setDischargeTarget(null)}
                 disabled={isDischarging}
-                className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+                className="rounded-xl border border-slate-200 dark:border-slate-750 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
@@ -1088,20 +1123,20 @@ export default function AdmissionsPage() {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-200"
         >
-          <div className="relative w-full max-w-xl rounded-2xl bg-white p-6 shadow-2xl transition-all">
-            <div className="flex items-start justify-between border-b border-slate-100 pb-4">
+          <div className="relative w-full max-w-xl rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-2xl transition-all border border-slate-100 dark:border-slate-800">
+            <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
               <div>
-                <h3 className="text-xl font-bold text-slate-900">Admission Dossier</h3>
-                <p className="text-xs font-mono text-slate-400 mt-0.5">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Admission Dossier</h3>
+                <p className="text-xs font-mono text-slate-400 dark:text-slate-500 mt-0.5">
                   Admission ID: {viewAdmission.id}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setViewAdmission(null)}
-                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300"
               >
                 &times;
               </button>
@@ -1109,32 +1144,32 @@ export default function AdmissionsPage() {
 
             <div className="mt-4 space-y-4">
               {/* Patient Card */}
-              <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+              <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/80 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-2">
                   Patient Demographics
                 </p>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div>
-                    <span className="text-slate-500">Name:</span>{" "}
-                    <strong className="font-semibold text-slate-900">
+                    <span className="text-slate-500 dark:text-slate-400">Name:</span>{" "}
+                    <strong className="font-semibold text-slate-900 dark:text-white">
                       {viewAdmission.patient?.name || "N/A"}
                     </strong>
                   </div>
                   <div>
-                    <span className="text-slate-500">Gender:</span>{" "}
-                    <span className="font-semibold text-slate-900">
+                    <span className="text-slate-500 dark:text-slate-400">Gender:</span>{" "}
+                    <span className="font-semibold text-slate-900 dark:text-white">
                       {viewAdmission.patient?.gender || "N/A"}
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-500">Phone:</span>{" "}
-                    <span className="font-semibold text-slate-900">
+                    <span className="text-slate-500 dark:text-slate-400">Phone:</span>{" "}
+                    <span className="font-semibold text-slate-900 dark:text-white">
                       {viewAdmission.patient?.phone_number || "N/A"}
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-500">DOB:</span>{" "}
-                    <span className="font-semibold text-slate-900">
+                    <span className="text-slate-500 dark:text-slate-400">DOB:</span>{" "}
+                    <span className="font-semibold text-slate-900 dark:text-white">
                       {formatDate(viewAdmission.patient?.date_of_birth)}
                     </span>
                   </div>
@@ -1142,32 +1177,32 @@ export default function AdmissionsPage() {
               </div>
 
               {/* Room Card */}
-              <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+              <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/80 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-2">
                   Room & Accommodation
                 </p>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div>
-                    <span className="text-slate-500">Room Number:</span>{" "}
-                    <strong className="font-semibold text-slate-900">
+                    <span className="text-slate-500 dark:text-slate-400">Room Number:</span>{" "}
+                    <strong className="font-semibold text-slate-900 dark:text-white">
                       #{viewAdmission.room?.room_number || "N/A"}
                     </strong>
                   </div>
                   <div>
-                    <span className="text-slate-500">Category:</span>{" "}
-                    <span className="font-semibold text-slate-900">
+                    <span className="text-slate-500 dark:text-slate-400">Category:</span>{" "}
+                    <span className="font-semibold text-slate-900 dark:text-white">
                       {viewAdmission.room?.type || "N/A"}
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-500">Daily Charge:</span>{" "}
-                    <span className="font-semibold text-emerald-600">
+                    <span className="text-slate-500 dark:text-slate-400">Daily Charge:</span>{" "}
+                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">
                       {formatCurrency(viewAdmission.room?.daily_charge)} / day
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-500">Room UUID:</span>{" "}
-                    <span className="font-mono text-[10px] text-slate-500">
+                    <span className="text-slate-500 dark:text-slate-400">Room UUID:</span>{" "}
+                    <span className="font-mono text-[10px] text-slate-500 dark:text-slate-400">
                       {viewAdmission.room_id.slice(0, 8)}...
                     </span>
                   </div>
@@ -1175,35 +1210,35 @@ export default function AdmissionsPage() {
               </div>
 
               {/* Timeline Card */}
-              <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+              <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/80 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-2">
                   Hospitalization Period & Billing
                 </p>
                 <div className="space-y-1.5 text-xs">
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Admission Timestamp:</span>
-                    <span className="font-medium text-slate-900">
+                    <span className="text-slate-500 dark:text-slate-400">Admission Timestamp:</span>
+                    <span className="font-medium text-slate-900 dark:text-white">
                       {formatDateTime(viewAdmission.admission_date)}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Discharge Timestamp:</span>
-                    <span className="font-medium text-slate-900">
+                    <span className="text-slate-500 dark:text-slate-400">Discharge Timestamp:</span>
+                    <span className="font-medium text-slate-900 dark:text-white">
                       {viewAdmission.discharge_date
                         ? formatDateTime(viewAdmission.discharge_date)
                         : "Active (In Hospital)"}
                     </span>
                   </div>
-                  <div className="flex justify-between border-t border-slate-200/60 pt-1.5">
-                    <span className="text-slate-500">Duration of Stay:</span>
-                    <strong className="font-semibold text-emerald-700">
+                  <div className="flex justify-between border-t border-slate-200/60 dark:border-slate-800 pt-1.5">
+                    <span className="text-slate-500 dark:text-slate-400">Duration of Stay:</span>
+                    <strong className="font-semibold text-emerald-700 dark:text-emerald-300">
                       {calculateStayDuration(viewAdmission.admission_date, viewAdmission.discharge_date).label}
                     </strong>
                   </div>
                   {viewAdmission.room?.daily_charge && (
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Estimated Accommodation Subtotal:</span>
-                      <strong className="font-bold text-slate-900">
+                      <span className="text-slate-500 dark:text-slate-400">Estimated Accommodation Subtotal:</span>
+                      <strong className="font-bold text-slate-900 dark:text-white">
                         {formatCurrency(
                           calculateStayDuration(
                             viewAdmission.admission_date,
@@ -1218,23 +1253,23 @@ export default function AdmissionsPage() {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-5">
+            <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-4 mt-5">
               {!viewAdmission.discharge_date ? (
                 <button
                   type="button"
                   onClick={() => handleOpenDischarge(viewAdmission)}
-                  className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-xs font-semibold text-rose-700 hover:bg-rose-100 transition-colors"
+                  className="rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/60 px-4 py-2 text-xs font-semibold text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-colors"
                 >
                   Discharge Patient
                 </button>
               ) : (
-                <span className="text-xs text-slate-400">Admission is closed</span>
+                <span className="text-xs text-slate-400 dark:text-slate-500">Admission is closed</span>
               )}
 
               <button
                 type="button"
                 onClick={() => setViewAdmission(null)}
-                className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors"
+                className="rounded-xl bg-slate-900 dark:bg-slate-800 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
               >
                 Close
               </button>

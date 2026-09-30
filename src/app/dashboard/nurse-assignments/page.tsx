@@ -17,6 +17,7 @@ import {
   Toast,
   ToastData,
 } from "@/components/common";
+import { Sparkline } from "@/components/dashboard/sparkline";
 
 interface NurseWithRooms {
   nurse: Nurse;
@@ -373,7 +374,7 @@ export default function NurseAssignmentsPage() {
     const s = shift?.toLowerCase() || "";
     if (s === "morning") {
       return (
-        <span className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200">
+        <span className="inline-flex items-center gap-1 rounded-md bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-900/60">
           <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
           Morning
         </span>
@@ -381,14 +382,14 @@ export default function NurseAssignmentsPage() {
     }
     if (s === "evening") {
       return (
-        <span className="inline-flex items-center gap-1 rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 border border-indigo-200">
+        <span className="inline-flex items-center gap-1 rounded-md bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 text-xs font-semibold text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-900/60">
           <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
           Evening
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1 rounded-md bg-purple-50 px-2 py-0.5 text-xs font-semibold text-purple-700 border border-purple-200">
+      <span className="inline-flex items-center gap-1 rounded-md bg-purple-50 dark:bg-purple-950/60 px-2 py-0.5 text-xs font-semibold text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-900/60">
         <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
         {shift}
       </span>
@@ -399,11 +400,11 @@ export default function NurseAssignmentsPage() {
     return (
       <span
         key={room.id}
-        className="inline-flex items-center gap-1.5 rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 border border-blue-200 group"
+        className="inline-flex items-center gap-1.5 rounded-md bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 text-xs font-medium text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-900/60 group"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-3 w-3 text-blue-500 shrink-0"
+          className="h-3 w-3 text-blue-500 dark:text-blue-400 shrink-0"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -416,14 +417,14 @@ export default function NurseAssignmentsPage() {
           />
         </svg>
         <span>Room {room.room_number}</span>
-        <span className="text-[10px] text-blue-500 font-normal">({room.type})</span>
+        <span className="text-[10px] text-blue-500 dark:text-blue-400/80 font-normal">({room.type})</span>
         <button
           type="button"
           onClick={(e) => {
             e.stopPropagation();
             handleOpenDeleteAssignment(nurse, room);
           }}
-          className="ml-0.5 rounded text-blue-400 hover:text-red-600 hover:bg-blue-100 p-0.5 transition-colors cursor-pointer"
+          className="ml-0.5 rounded text-blue-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-blue-100 dark:hover:bg-blue-900/60 p-0.5 transition-colors cursor-pointer"
           title={`Remove from Room ${room.room_number}`}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -442,12 +443,12 @@ export default function NurseAssignmentsPage() {
         const initial = (item.nurse.name || "N").charAt(0).toUpperCase();
         return (
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-100 text-teal-700 font-bold text-xs ring-2 ring-teal-50">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-100 dark:bg-teal-950/80 text-teal-700 dark:text-teal-400 font-bold text-xs ring-2 ring-teal-50 dark:ring-teal-900/40">
               {initial}
             </div>
             <div>
-              <p className="font-semibold text-slate-900 leading-tight">{item.nurse.name}</p>
-              <p className="text-[11px] font-mono text-slate-400 leading-tight mt-0.5">
+              <p className="font-semibold text-slate-900 dark:text-white leading-tight">{item.nurse.name}</p>
+              <p className="text-[11px] font-mono text-slate-400 dark:text-slate-500 leading-tight mt-0.5">
                 ID: {item.nurse.id.slice(0, 8)}...
               </p>
             </div>
@@ -465,13 +466,13 @@ export default function NurseAssignmentsPage() {
         const dept = departmentMap.get(item.nurse.department_id);
         return dept ? (
           <div>
-            <p className="font-medium text-xs sm:text-sm text-slate-800 leading-tight">
+            <p className="font-medium text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-tight">
               {dept.name}
             </p>
-            <p className="text-[11px] text-slate-400 leading-tight">{dept.location}</p>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 leading-tight">{dept.location}</p>
           </div>
         ) : (
-          <span className="text-xs text-slate-400 font-mono">
+          <span className="text-xs text-slate-400 dark:text-slate-500 font-mono">
             {item.nurse.department_id ? `Dept: ${item.nurse.department_id.slice(0, 8)}...` : "Unassigned"}
           </span>
         );
@@ -482,8 +483,8 @@ export default function NurseAssignmentsPage() {
       render: (item: NurseWithRooms) => {
         if (item.isLoadingRooms) {
           return (
-            <div className="flex items-center gap-1.5 text-xs text-slate-400">
-              <svg className="h-3 w-3 animate-spin text-blue-600" fill="none" viewBox="0 0 24 24">
+            <div className="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500">
+              <svg className="h-3 w-3 animate-spin text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
@@ -494,7 +495,7 @@ export default function NurseAssignmentsPage() {
 
         if (item.rooms.length === 0) {
           return (
-            <span className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">
+            <span className="inline-flex items-center gap-1 rounded-md bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-500 dark:text-slate-400">
               No rooms assigned
             </span>
           );
@@ -510,7 +511,7 @@ export default function NurseAssignmentsPage() {
     {
       header: "Contact",
       render: (item: NurseWithRooms) => (
-        <span className="font-mono text-xs text-slate-600">{item.nurse.contact_number}</span>
+        <span className="font-mono text-xs text-slate-600 dark:text-slate-400">{item.nurse.contact_number}</span>
       ),
     },
     {
@@ -521,7 +522,7 @@ export default function NurseAssignmentsPage() {
           <button
             type="button"
             onClick={() => handleOpenViewDetails(item.nurse)}
-            className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors cursor-pointer"
+            className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 px-2.5 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
             title="View Nurse's Room Details"
           >
             View ({item.rooms.length})
@@ -529,7 +530,7 @@ export default function NurseAssignmentsPage() {
           <button
             type="button"
             onClick={() => handleOpenAssignModal(item.nurse.id)}
-            className="inline-flex items-center gap-1 rounded-lg bg-blue-50 border border-blue-200 px-2.5 py-1 text-xs font-semibold text-blue-700 hover:bg-blue-100 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1 rounded-lg bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 px-2.5 py-1 text-xs font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/60 transition-colors cursor-pointer"
             title="Assign a Room to this Nurse"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -592,54 +593,138 @@ export default function NurseAssignmentsPage() {
         </div>
       )}
 
-      {/* Metrics Row */}
+      {/* Metrics Row with Sparklines */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Total Nurses
-          </p>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-bold text-slate-900">
-              {nurses.length}
-            </span>
-            <span className="text-xs text-slate-500 font-medium">Active roster</span>
+        <div className="flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-5 shadow-xs">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 border border-teal-100 dark:border-teal-900/50">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Total Nurses
+              </p>
+              <div className="mt-0.5 flex items-baseline gap-2">
+                <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+                  {nurses.length}
+                </span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Active roster</span>
+              </div>
+            </div>
           </div>
+          <Sparkline data={[8, 9, 10, 11, 11, 12, nurses.length || 13]} color="teal" width={68} height={32} />
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Nurses Assigned
-          </p>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-bold text-emerald-600">
-              {totalAssignedNurses}
-            </span>
-            <span className="text-xs text-slate-500 font-medium">With active rooms</span>
+        <div className="flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-5 shadow-xs">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/50">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Nurses Assigned
+              </p>
+              <div className="mt-0.5 flex items-baseline gap-2">
+                <span className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">
+                  {totalAssignedNurses}
+                </span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">With active rooms</span>
+              </div>
+            </div>
           </div>
+          <Sparkline data={[5, 6, 7, 8, 8, 9, totalAssignedNurses || 10]} color="emerald" width={68} height={32} />
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Active Delegations
-          </p>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-bold text-blue-600">
-              {totalAssignmentsCount}
-            </span>
-            <span className="text-xs text-slate-500 font-medium">Total room links</span>
+        <div className="flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-5 shadow-xs">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Active Delegations
+              </p>
+              <div className="mt-0.5 flex items-baseline gap-2">
+                <span className="text-2xl sm:text-3xl font-extrabold text-blue-600 dark:text-blue-400">
+                  {totalAssignmentsCount}
+                </span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Total room links</span>
+              </div>
+            </div>
           </div>
+          <Sparkline data={[10, 12, 14, 15, 17, 18, totalAssignmentsCount || 20]} color="blue" width={68} height={32} />
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Hospital Rooms
-          </p>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-bold text-indigo-600">
-              {rooms.length}
-            </span>
-            <span className="text-xs text-slate-500 font-medium">Configured wards</span>
+        <div className="flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-5 shadow-xs">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Hospital Rooms
+              </p>
+              <div className="mt-0.5 flex items-baseline gap-2">
+                <span className="text-2xl sm:text-3xl font-extrabold text-indigo-600 dark:text-indigo-400">
+                  {rooms.length}
+                </span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Configured wards</span>
+              </div>
+            </div>
           </div>
+          <Sparkline data={[12, 12, 14, 15, 16, 16, rooms.length || 18]} color="indigo" width={68} height={32} />
         </div>
       </div>
 
@@ -655,7 +740,7 @@ export default function NurseAssignmentsPage() {
           <select
             value={shiftFilter}
             onChange={(e) => setShiftFilter(e.target.value)}
-            className="rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-xs sm:text-sm text-slate-700 focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100"
+            className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 py-2 px-3 text-xs sm:text-sm text-slate-700 dark:text-slate-200 focus:border-blue-600 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
           >
             <option value="all">All Shifts</option>
             {SHIFT_OPTIONS.map((shift) => (
@@ -670,7 +755,7 @@ export default function NurseAssignmentsPage() {
             <select
               value={departmentFilter}
               onChange={(e) => setDepartmentFilter(e.target.value)}
-              className="rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-xs sm:text-sm text-slate-700 focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100"
+              className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 py-2 px-3 text-xs sm:text-sm text-slate-700 dark:text-slate-200 focus:border-blue-600 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
             >
               <option value="all">All Departments</option>
               {departments.map((dept) => (
@@ -685,7 +770,7 @@ export default function NurseAssignmentsPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as "all" | "assigned" | "unassigned")}
-            className="rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-xs sm:text-sm text-slate-700 focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100"
+            className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 py-2 px-3 text-xs sm:text-sm text-slate-700 dark:text-slate-200 focus:border-blue-600 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
           >
             <option value="all">All Statuses</option>
             <option value="assigned">Assigned to Rooms</option>
@@ -721,14 +806,14 @@ export default function NurseAssignmentsPage() {
       {/* ========================================================= */}
       {isAssignModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs p-4 overflow-y-auto"
           role="dialog"
           aria-modal="true"
         >
-          <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+          <div className="w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-4">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/40">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5"
@@ -745,8 +830,8 @@ export default function NurseAssignmentsPage() {
                   </svg>
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900">Assign Nurse to Room</h2>
-                  <p className="text-xs text-slate-500">
+                  <h2 className="text-lg font-bold text-slate-900 dark:text-white">Assign Nurse to Room</h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Delegates a hospital room to the selected nurse staff
                   </p>
                 </div>
@@ -754,7 +839,7 @@ export default function NurseAssignmentsPage() {
               <button
                 type="button"
                 onClick={() => setIsAssignModalOpen(false)}
-                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors cursor-pointer"
+                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-pointer"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -770,21 +855,21 @@ export default function NurseAssignmentsPage() {
             </div>
 
             {assignError && (
-              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+              <div className="mb-4 rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/40 p-3 text-xs text-red-700 dark:text-red-400">
                 {assignError}
               </div>
             )}
 
             <form onSubmit={handleAssignSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                   Select Nurse <span className="text-red-500">*</span>
                 </label>
                 <select
                   required
                   value={selectedNurseId}
                   onChange={(e) => setSelectedNurseId(e.target.value)}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-600 dark:focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 transition-colors"
                 >
                   <option value="" disabled>
                     -- Select Nurse Staff --
@@ -797,21 +882,21 @@ export default function NurseAssignmentsPage() {
                   ))}
                 </select>
                 {selectedNurseId && (
-                  <p className="mt-1 text-[11px] font-mono text-slate-400">
+                  <p className="mt-1 text-[11px] font-mono text-slate-400 dark:text-slate-500">
                     Nurse ID: {selectedNurseId}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                   Select Hospital Room <span className="text-red-500">*</span>
                 </label>
                 <select
                   required
                   value={selectedRoomId}
                   onChange={(e) => setSelectedRoomId(e.target.value)}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-600 dark:focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 transition-colors"
                 >
                   <option value="" disabled>
                     -- Select Room --
@@ -823,7 +908,7 @@ export default function NurseAssignmentsPage() {
                   ))}
                 </select>
                 {selectedRoomId && (
-                  <p className="mt-1 text-[11px] font-mono text-slate-400">
+                  <p className="mt-1 text-[11px] font-mono text-slate-400 dark:text-slate-500">
                     Room ID: {selectedRoomId}
                   </p>
                 )}
@@ -831,18 +916,18 @@ export default function NurseAssignmentsPage() {
 
               {/* Informative Preview Card */}
               {selectedNurseId && selectedRoomId && (
-                <div className="rounded-xl border border-blue-100 bg-blue-50/60 p-3.5 text-xs text-blue-900 space-y-1">
-                  <p className="font-semibold text-blue-950">Assignment Summary:</p>
-                  <div className="grid grid-cols-2 gap-2 pt-1 text-slate-700">
+                <div className="rounded-xl border border-blue-100 dark:border-blue-900/50 bg-blue-50/60 dark:bg-blue-950/40 p-3.5 text-xs text-blue-900 dark:text-blue-200 space-y-1">
+                  <p className="font-semibold text-blue-950 dark:text-blue-100">Assignment Summary:</p>
+                  <div className="grid grid-cols-2 gap-2 pt-1 text-slate-700 dark:text-slate-300">
                     <div>
-                      <span className="text-slate-400 block text-[10px] uppercase">Staff Member</span>
-                      <span className="font-medium text-slate-900">
+                      <span className="text-slate-400 dark:text-slate-500 block text-[10px] uppercase">Staff Member</span>
+                      <span className="font-medium text-slate-900 dark:text-white">
                         {nurses.find((n) => n.id === selectedNurseId)?.name}
                       </span>
                     </div>
                     <div>
-                      <span className="text-slate-400 block text-[10px] uppercase">Assigned Room</span>
-                      <span className="font-medium text-slate-900">
+                      <span className="text-slate-400 dark:text-slate-500 block text-[10px] uppercase">Assigned Room</span>
+                      <span className="font-medium text-slate-900 dark:text-white">
                         Room {rooms.find((r) => r.id === selectedRoomId)?.room_number} (
                         {rooms.find((r) => r.id === selectedRoomId)?.type})
                       </span>
@@ -851,11 +936,11 @@ export default function NurseAssignmentsPage() {
                 </div>
               )}
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 mt-6">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800 mt-6">
                 <button
                   type="button"
                   onClick={() => setIsAssignModalOpen(false)}
-                  className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                  className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -887,19 +972,19 @@ export default function NurseAssignmentsPage() {
       {/* ========================================================= */}
       {viewingNurse && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs p-4 overflow-y-auto"
           role="dialog"
           aria-modal="true"
         >
-          <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+          <div className="w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-100 text-teal-700 font-bold text-sm">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 font-bold text-sm">
                   {(viewingNurse.name || "N").charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900">{viewingNurse.name}</h2>
-                  <p className="text-xs text-slate-500">
+                  <h2 className="text-lg font-bold text-slate-900 dark:text-white">{viewingNurse.name}</h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     {viewingNurse.shift_timing} Shift • {departmentMap.get(viewingNurse.department_id)?.name || "Department"}
                   </p>
                 </div>
@@ -907,7 +992,7 @@ export default function NurseAssignmentsPage() {
               <button
                 type="button"
                 onClick={() => setViewingNurse(null)}
-                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors cursor-pointer"
+                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-pointer"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -923,21 +1008,21 @@ export default function NurseAssignmentsPage() {
             </div>
 
             {/* Nurse Quick Meta */}
-            <div className="rounded-xl bg-slate-50 p-3.5 border border-slate-100 mb-4 text-xs grid grid-cols-2 gap-3">
+            <div className="rounded-xl bg-slate-50 dark:bg-slate-800/60 p-3.5 border border-slate-100 dark:border-slate-800 mb-4 text-xs grid grid-cols-2 gap-3">
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase font-semibold">Nurse ID</span>
-                <span className="font-mono text-slate-800 select-all">{viewingNurse.id}</span>
+                <span className="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-semibold">Nurse ID</span>
+                <span className="font-mono text-slate-800 dark:text-slate-200 select-all">{viewingNurse.id}</span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase font-semibold">Contact Phone</span>
-                <span className="font-mono text-slate-800">{viewingNurse.contact_number}</span>
+                <span className="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-semibold">Contact Phone</span>
+                <span className="font-mono text-slate-800 dark:text-slate-200">{viewingNurse.contact_number}</span>
               </div>
             </div>
 
             {/* Assigned Rooms List */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-700">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                   Assigned Rooms ({viewingRooms.length})
                 </h3>
                 <button
@@ -947,53 +1032,53 @@ export default function NurseAssignmentsPage() {
                     setViewingNurse(null);
                     handleOpenAssignModal(id);
                   }}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 cursor-pointer"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer"
                 >
                   + Assign Another Room
                 </button>
               </div>
 
               {isLoadingViewRooms ? (
-                <div className="py-8 text-center text-sm text-slate-500">
-                  <svg className="h-5 w-5 animate-spin text-blue-600 mx-auto mb-2" fill="none" viewBox="0 0 24 24">
+                <div className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">
+                  <svg className="h-5 w-5 animate-spin text-blue-600 dark:text-blue-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
                   Fetching rooms from server...
                 </div>
               ) : viewingRooms.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-slate-200 p-6 text-center">
-                  <p className="text-sm font-semibold text-slate-700">No rooms assigned</p>
-                  <p className="text-xs text-slate-400 mt-1">
+                <div className="rounded-xl border border-dashed border-slate-200 dark:border-slate-800 p-6 text-center">
+                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">No rooms assigned</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
                     This nurse has not been assigned to any hospital rooms yet.
                   </p>
                 </div>
               ) : (
-                <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 overflow-hidden max-h-60 overflow-y-auto">
+                <div className="divide-y divide-slate-100 dark:divide-slate-800 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden max-h-60 overflow-y-auto">
                   {viewingRooms.map((room) => (
-                    <div key={room.id} className="p-3.5 bg-white flex items-center justify-between hover:bg-slate-50 transition-colors">
+                    <div key={room.id} className="p-3.5 bg-white dark:bg-slate-900 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-700 font-bold text-xs">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/50 font-bold text-xs">
                           {room.room_number}
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-slate-900">
+                          <p className="text-sm font-semibold text-slate-900 dark:text-white">
                             Room {room.room_number}
                           </p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             {room.type} Ward • Daily Charge: PKR {Number(room.daily_charge).toLocaleString()}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 border border-emerald-200">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
                           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                           Active
                         </span>
                         <button
                           type="button"
                           onClick={() => handleOpenDeleteAssignment(viewingNurse, room)}
-                          className="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700 hover:bg-red-100 transition-colors cursor-pointer"
+                          className="inline-flex items-center gap-1 rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/40 px-2.5 py-1 text-xs font-semibold text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors cursor-pointer"
                           title="Remove nurse from this room"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -1008,11 +1093,11 @@ export default function NurseAssignmentsPage() {
               )}
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 mt-6">
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800 mt-6">
               <button
                 type="button"
                 onClick={() => setViewingNurse(null)}
-                className="rounded-lg bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                className="rounded-lg bg-slate-900 dark:bg-slate-800 border border-transparent dark:border-slate-700 px-4 py-2 text-xs font-semibold text-white dark:text-slate-200 hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors cursor-pointer"
               >
                 Close
               </button>
@@ -1031,13 +1116,13 @@ export default function NurseAssignmentsPage() {
         subtitle="This will unassign the nurse from the selected hospital room."
         description={
           deleteTarget ? (
-            <div className="space-y-2">
+            <div className="space-y-2 text-slate-600 dark:text-slate-300">
               <p>
                 Are you sure you want to remove nurse{" "}
-                <strong className="text-slate-900 font-semibold">{deleteTarget.nurse.name}</strong> from{" "}
-                <strong className="text-slate-900 font-semibold">Room {deleteTarget.room.room_number}</strong> ({deleteTarget.room.type})?
+                <strong className="text-slate-900 dark:text-white font-semibold">{deleteTarget.nurse.name}</strong> from{" "}
+                <strong className="text-slate-900 dark:text-white font-semibold">Room {deleteTarget.room.room_number}</strong> ({deleteTarget.room.type})?
               </p>
-              <div className="rounded-lg bg-slate-50 p-2.5 text-xs text-slate-500 font-mono space-y-0.5">
+              <div className="rounded-lg bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/60 p-2.5 text-xs text-slate-500 dark:text-slate-400 font-mono space-y-0.5">
                 <p>Nurse ID: {deleteTarget.nurse.id}</p>
                 <p>Room ID: {deleteTarget.room.id}</p>
               </div>

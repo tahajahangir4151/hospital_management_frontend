@@ -2,9 +2,20 @@
 
 import React, { useId } from "react";
 
+export type SparklineColor =
+  | "indigo"
+  | "emerald"
+  | "blue"
+  | "amber"
+  | "rose"
+  | "teal"
+  | "purple"
+  | "cyan"
+  | (string & {});
+
 interface SparklineProps {
   data: number[];
-  color?: "indigo" | "emerald" | "blue" | "amber" | "rose";
+  color?: SparklineColor;
   height?: number;
   width?: number;
   showDot?: boolean;
@@ -47,7 +58,7 @@ export function Sparkline({
   const lastPt = points[points.length - 1];
   const areaD = `${pathD} L ${lastPt.x},${height} L ${points[0].x},${height} Z`;
 
-  const colorConfig = {
+  const knownConfigs: Record<string, { stroke: string; fillStart: string; fillEnd: string; dot: string; dotRing: string }> = {
     indigo: {
       stroke: "#6366F1",
       fillStart: "rgba(99, 102, 241, 0.35)",
@@ -83,7 +94,85 @@ export function Sparkline({
       dot: "#E11D48",
       dotRing: "rgba(244, 63, 94, 0.4)",
     },
-  }[color];
+    teal: {
+      stroke: "#14B8A6",
+      fillStart: "rgba(20, 184, 166, 0.35)",
+      fillEnd: "rgba(20, 184, 166, 0.0)",
+      dot: "#0D9488",
+      dotRing: "rgba(20, 184, 166, 0.4)",
+    },
+    purple: {
+      stroke: "#8B5CF6",
+      fillStart: "rgba(139, 92, 246, 0.35)",
+      fillEnd: "rgba(139, 92, 246, 0.0)",
+      dot: "#7C3AED",
+      dotRing: "rgba(139, 92, 246, 0.4)",
+    },
+    cyan: {
+      stroke: "#06B6D4",
+      fillStart: "rgba(6, 182, 212, 0.35)",
+      fillEnd: "rgba(6, 182, 212, 0.0)",
+      dot: "#0891B2",
+      dotRing: "rgba(6, 182, 212, 0.4)",
+    },
+    "#10b981": {
+      stroke: "#10B981",
+      fillStart: "rgba(16, 185, 129, 0.35)",
+      fillEnd: "rgba(16, 185, 129, 0.0)",
+      dot: "#059669",
+      dotRing: "rgba(16, 185, 129, 0.4)",
+    },
+    "#3b82f6": {
+      stroke: "#3B82F6",
+      fillStart: "rgba(59, 130, 246, 0.35)",
+      fillEnd: "rgba(59, 130, 246, 0.0)",
+      dot: "#2563EB",
+      dotRing: "rgba(59, 130, 246, 0.4)",
+    },
+    "#6366f1": {
+      stroke: "#6366F1",
+      fillStart: "rgba(99, 102, 241, 0.35)",
+      fillEnd: "rgba(99, 102, 241, 0.0)",
+      dot: "#4F46E5",
+      dotRing: "rgba(99, 102, 241, 0.4)",
+    },
+    "#f59e0b": {
+      stroke: "#F59E0B",
+      fillStart: "rgba(245, 158, 11, 0.35)",
+      fillEnd: "rgba(245, 158, 11, 0.0)",
+      dot: "#D97706",
+      dotRing: "rgba(245, 158, 11, 0.4)",
+    },
+    "#14b8a6": {
+      stroke: "#14B8A6",
+      fillStart: "rgba(20, 184, 166, 0.35)",
+      fillEnd: "rgba(20, 184, 166, 0.0)",
+      dot: "#0D9488",
+      dotRing: "rgba(20, 184, 166, 0.4)",
+    },
+    "#0284c7": {
+      stroke: "#0284C7",
+      fillStart: "rgba(2, 132, 199, 0.35)",
+      fillEnd: "rgba(2, 132, 199, 0.0)",
+      dot: "#0369A1",
+      dotRing: "rgba(2, 132, 199, 0.4)",
+    },
+    "#e11d48": {
+      stroke: "#E11D48",
+      fillStart: "rgba(225, 29, 72, 0.35)",
+      fillEnd: "rgba(225, 29, 72, 0.0)",
+      dot: "#BE123C",
+      dotRing: "rgba(225, 29, 72, 0.4)",
+    },
+  };
+
+  const colorConfig = knownConfigs[color] || {
+    stroke: color,
+    fillStart: "rgba(99, 102, 241, 0.3)",
+    fillEnd: "rgba(99, 102, 241, 0.0)",
+    dot: color,
+    dotRing: "rgba(99, 102, 241, 0.3)",
+  };
 
   return (
     <svg

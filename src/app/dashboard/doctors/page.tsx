@@ -6,6 +6,7 @@ import { departmentService } from "@/services/department.service";
 import { dashboardService } from "@/services/dashboard.service";
 import { Doctor, CreateDoctorDTO, UpdateDoctorDTO } from "@/types/doctor";
 import { Department } from "@/types/department";
+import { Sparkline } from "@/components/dashboard/sparkline";
 
 interface ToastNotification {
   id: number;
@@ -347,19 +348,19 @@ export default function DoctorsPage() {
       )}
 
       {/* Page Header */}
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-xs">
+      <div className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-6 shadow-xs">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="h-2 w-2 rounded-full bg-blue-600" />
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              <span className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Medical Staff Management
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
               Doctors Directory
             </h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               Manage hospital physicians, clinical specialties, departmental assignments, and medical qualifications.
             </p>
           </div>
@@ -370,12 +371,12 @@ export default function DoctorsPage() {
               type="button"
               onClick={() => loadData(true)}
               disabled={isRefreshing || isLoading}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-750 bg-white dark:bg-slate-850 px-3.5 py-2 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 active:bg-slate-100 dark:active:bg-slate-750 transition-colors cursor-pointer disabled:opacity-50"
               title="Force reload doctors from API"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className={`h-4 w-4 text-slate-500 ${isRefreshing ? "animate-spin text-blue-600" : ""}`}
+                className={`h-4 w-4 text-slate-500 dark:text-slate-400 ${isRefreshing ? "animate-spin text-blue-600 dark:text-blue-400" : ""}`}
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -393,7 +394,7 @@ export default function DoctorsPage() {
             <button
               type="button"
               onClick={handleOpenCreate}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3.5 py-2 text-xs sm:text-sm font-semibold text-white shadow-xs hover:bg-blue-700 active:bg-blue-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-xs hover:bg-blue-700 active:bg-blue-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
               title="Register new doctor"
             >
               <svg
@@ -414,54 +415,99 @@ export default function DoctorsPage() {
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Total Doctors
-          </p>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-bold text-slate-900">
-              {doctors.length}
-            </span>
-            <span className="text-xs text-slate-500 font-medium">Physicians on staff</span>
+        <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-5 shadow-xs hover:shadow-md hover:border-blue-500/40 dark:hover:border-blue-500/40 transition-all">
+          <div className="flex items-start justify-between">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 group-hover:scale-105 transition-transform">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <Sparkline
+              data={[Math.max(1, doctors.length * 0.75), doctors.length * 0.85, doctors.length * 0.9, doctors.length * 0.95, doctors.length]}
+              color="#3b82f6"
+              width={76}
+              height={32}
+            />
+          </div>
+          <div className="mt-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              Total Doctors
+            </p>
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
+                {doctors.length}
+              </span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Physicians on staff</span>
+            </div>
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Clinical Specialties
-          </p>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-bold text-slate-900">
-              {uniqueSpecialties.length}
-            </span>
-            <span className="text-xs text-slate-500 font-medium">Distinct fields</span>
+        <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-5 shadow-xs hover:shadow-md hover:border-teal-500/40 dark:hover:border-teal-500/40 transition-all">
+          <div className="flex items-start justify-between">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 group-hover:scale-105 transition-transform">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+              </svg>
+            </div>
+            <Sparkline
+              data={[Math.max(1, uniqueSpecialties.length * 0.6), uniqueSpecialties.length * 0.75, uniqueSpecialties.length * 0.85, uniqueSpecialties.length * 0.9, uniqueSpecialties.length]}
+              color="#14b8a6"
+              width={76}
+              height={32}
+            />
+          </div>
+          <div className="mt-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              Clinical Specialties
+            </p>
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
+                {uniqueSpecialties.length}
+              </span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Distinct fields</span>
+            </div>
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Average Experience
-          </p>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-bold text-slate-900">
-              {avgExperience}
-            </span>
-            <span className="text-xs text-slate-500 font-medium">Years in practice</span>
+        <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-5 shadow-xs hover:shadow-md hover:border-indigo-500/40 dark:hover:border-indigo-500/40 transition-all">
+          <div className="flex items-start justify-between">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 group-hover:scale-105 transition-transform">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <Sparkline
+              data={[Math.max(1, avgExperience * 0.8), avgExperience * 0.88, avgExperience * 0.92, avgExperience * 0.97, avgExperience]}
+              color="#6366f1"
+              width={76}
+              height={32}
+            />
+          </div>
+          <div className="mt-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              Average Experience
+            </p>
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
+                {avgExperience}
+              </span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Years in practice</span>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Main Table Card */}
-      <div className="rounded-xl border border-slate-200 bg-white shadow-xs overflow-hidden">
+      <div className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/90 shadow-xs overflow-hidden">
         {/* Search & Filter Bar */}
-        <div className="flex flex-col gap-3 border-b border-slate-200 p-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-3 border-b border-slate-200 dark:border-slate-800 p-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center flex-1 max-w-2xl">
             {/* Search query */}
             <div className="relative flex-1">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 text-slate-400"
+                  className="h-4 w-4 text-slate-400 dark:text-slate-500"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -475,7 +521,7 @@ export default function DoctorsPage() {
                 placeholder="Search by doctor name, specialty, contact..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-4 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100 transition-colors"
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-750 bg-slate-50 dark:bg-slate-850 py-2 pl-9 pr-4 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-600 focus:bg-white dark:focus:bg-slate-850 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 transition-colors"
               />
             </div>
 
@@ -484,7 +530,7 @@ export default function DoctorsPage() {
               <select
                 value={specialtyFilter}
                 onChange={(e) => setSpecialtyFilter(e.target.value)}
-                className="rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-xs sm:text-sm text-slate-700 focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100"
+                className="rounded-xl border border-slate-200 dark:border-slate-750 bg-slate-50 dark:bg-slate-850 py-2 px-3 text-xs sm:text-sm text-slate-700 dark:text-slate-200 focus:border-blue-600 focus:bg-white dark:focus:bg-slate-850 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
               >
                 <option value="all">All Specialties</option>
                 {uniqueSpecialties.map((spec) => (
@@ -500,7 +546,7 @@ export default function DoctorsPage() {
               <select
                 value={departmentFilter}
                 onChange={(e) => setDepartmentFilter(e.target.value)}
-                className="rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-xs sm:text-sm text-slate-700 focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100"
+                className="rounded-xl border border-slate-200 dark:border-slate-750 bg-slate-50 dark:bg-slate-850 py-2 px-3 text-xs sm:text-sm text-slate-700 dark:text-slate-200 focus:border-blue-600 focus:bg-white dark:focus:bg-slate-850 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
               >
                 <option value="all">All Departments</option>
                 {departments.map((dept) => (
@@ -512,10 +558,10 @@ export default function DoctorsPage() {
             )}
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-slate-500">
+          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
             <span>
-              Showing <strong className="text-slate-800">{filteredDoctors.length}</strong> of{" "}
-              <strong className="text-slate-800">{doctors.length}</strong> doctors
+              Showing <strong className="text-slate-800 dark:text-slate-200">{filteredDoctors.length}</strong> of{" "}
+              <strong className="text-slate-800 dark:text-slate-200">{doctors.length}</strong> doctors
             </span>
           </div>
         </div>
@@ -523,20 +569,20 @@ export default function DoctorsPage() {
         {/* Error Alert */}
         {error && (
           <div className="p-6">
-            <div role="alert" className="flex items-start justify-between rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            <div role="alert" className="flex items-start justify-between rounded-xl border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/40 p-4 text-sm text-red-700 dark:text-red-300">
               <div className="flex items-start gap-3">
                 <svg className="h-5 w-5 shrink-0 text-red-500 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
                 </svg>
                 <div>
                   <p className="font-semibold">Unable to load doctors</p>
-                  <p className="mt-0.5 text-xs text-red-600">{error}</p>
+                  <p className="mt-0.5 text-xs text-red-600 dark:text-red-400">{error}</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => loadData(true)}
-                className="rounded-md border border-red-300 bg-white px-3 py-1 text-xs font-semibold text-red-700 hover:bg-red-50 cursor-pointer"
+                className="rounded-md border border-red-300 dark:border-red-800 bg-white dark:bg-slate-850 px-3 py-1 text-xs font-semibold text-red-700 dark:text-red-300 hover:bg-red-50 cursor-pointer"
               >
                 Retry
               </button>
@@ -547,7 +593,7 @@ export default function DoctorsPage() {
         {/* Loading Spinner */}
         {isLoading && (
           <div className="p-8 text-center">
-            <div className="inline-flex items-center gap-3 text-sm font-medium text-slate-500">
+            <div className="inline-flex items-center gap-3 text-sm font-medium text-slate-500 dark:text-slate-400">
               <svg className="h-5 w-5 animate-spin text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
@@ -562,7 +608,7 @@ export default function DoctorsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-slate-100 bg-slate-50/70 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/80 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                   <th className="py-3 px-4 sm:px-6">Doctor Name</th>
                   <th className="py-3 px-4">Specialization</th>
                   <th className="py-3 px-4">Department</th>
@@ -572,24 +618,24 @@ export default function DoctorsPage() {
                   <th className="py-3 px-4 sm:px-6 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-700">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
                 {filteredDoctors.map((doc) => {
                   const dept = departmentMap.get(doc.department_id);
                   const initial = (doc.full_name || "D").replace(/^Dr\.?\s*/i, "").charAt(0).toUpperCase();
 
                   return (
-                    <tr key={doc.id} className="hover:bg-slate-50/80 transition-colors group">
+                    <tr key={doc.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
                       {/* Name & Avatar */}
                       <td className="py-3.5 px-4 sm:px-6">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold text-xs ring-2 ring-blue-50">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 font-bold text-xs ring-2 ring-blue-50 dark:ring-blue-900/50">
                             {initial}
                           </div>
                           <div>
-                            <p className="font-semibold text-slate-900 leading-tight">
+                            <p className="font-semibold text-slate-900 dark:text-white leading-tight">
                               {doc.full_name}
                             </p>
-                            <p className="text-[11px] font-mono text-slate-400 leading-tight mt-0.5">
+                            <p className="text-[11px] font-mono text-slate-400 dark:text-slate-500 leading-tight mt-0.5">
                               ID: {doc.id.slice(0, 8)}...
                             </p>
                           </div>
@@ -598,7 +644,7 @@ export default function DoctorsPage() {
 
                       {/* Specialization Badge */}
                       <td className="py-3.5 px-4">
-                        <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700 border border-blue-200">
+                        <span className="inline-flex items-center rounded-md bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 text-xs font-semibold text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60">
                           {doc.specialization}
                         </span>
                       </td>
@@ -607,31 +653,31 @@ export default function DoctorsPage() {
                       <td className="py-3.5 px-4">
                         {dept ? (
                           <div>
-                            <p className="font-medium text-xs sm:text-sm text-slate-800 leading-tight">
+                            <p className="font-medium text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-tight">
                               {dept.name}
                             </p>
-                            <p className="text-[11px] text-slate-400 leading-tight">
+                            <p className="text-[11px] text-slate-400 dark:text-slate-500 leading-tight">
                               {dept.location}
                             </p>
                           </div>
                         ) : (
-                          <span className="text-xs text-slate-400 font-mono">
+                          <span className="text-xs text-slate-400 dark:text-slate-500 font-mono">
                             {doc.department_id ? `Dept: ${doc.department_id.slice(0, 8)}...` : "Unassigned"}
                           </span>
                         )}
                       </td>
 
                       {/* Years of Experience */}
-                      <td className="py-3.5 px-4 text-xs font-medium text-slate-700">
-                        <span className="inline-flex items-center gap-1 rounded bg-slate-100 px-2 py-0.5 text-slate-800">
+                      <td className="py-3.5 px-4 text-xs font-medium text-slate-700 dark:text-slate-300">
+                        <span className="inline-flex items-center gap-1 rounded bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-slate-800 dark:text-slate-200">
                           {doc.years_of_experience} {Number(doc.years_of_experience) === 1 ? "yr" : "yrs"} exp
                         </span>
                       </td>
 
                       {/* Contact Number */}
                       <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-1.5 text-slate-600 font-mono text-xs sm:text-sm">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 font-mono text-xs sm:text-sm">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                           </svg>
                           <span>{doc.contact_number}</span>
@@ -639,7 +685,7 @@ export default function DoctorsPage() {
                       </td>
 
                       {/* Date Registered */}
-                      <td className="py-3.5 px-4 text-xs text-slate-500">
+                      <td className="py-3.5 px-4 text-xs text-slate-500 dark:text-slate-400">
                         {formatDate(doc.created_at)}
                       </td>
 
@@ -650,7 +696,7 @@ export default function DoctorsPage() {
                           <button
                             type="button"
                             onClick={() => handleOpenView(doc)}
-                            className="rounded-md p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors cursor-pointer"
+                            className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
                             title="View Doctor Profile & Treatments"
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -663,7 +709,7 @@ export default function DoctorsPage() {
                           <button
                             type="button"
                             onClick={() => handleOpenEdit(doc)}
-                            className="rounded-md p-1.5 text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer"
+                            className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-blue-50 dark:hover:bg-blue-950/60 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
                             title="Edit Doctor Details"
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -675,7 +721,7 @@ export default function DoctorsPage() {
                           <button
                             type="button"
                             onClick={() => handleOpenDelete(doc)}
-                            className="rounded-md p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer"
+                            className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-red-50 dark:hover:bg-red-950/60 hover:text-red-600 dark:hover:text-red-400 transition-colors cursor-pointer"
                             title="Delete Doctor"
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -690,17 +736,17 @@ export default function DoctorsPage() {
 
                 {filteredDoctors.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="py-12 text-center text-slate-500">
+                    <td colSpan={7} className="py-12 text-center text-slate-500 dark:text-slate-400">
                       <div className="flex flex-col items-center justify-center gap-2">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                           </svg>
                         </div>
-                        <p className="text-sm font-semibold text-slate-700">
+                        <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                           No doctors found
                         </p>
-                        <p className="text-xs text-slate-400">
+                        <p className="text-xs text-slate-400 dark:text-slate-500">
                           {searchQuery || specialtyFilter !== "all" || departmentFilter !== "all"
                             ? "Try adjusting your filters or search keywords."
                             : "Click 'Add Doctor' to register your first physician."}
@@ -709,7 +755,7 @@ export default function DoctorsPage() {
                           <button
                             type="button"
                             onClick={handleOpenCreate}
-                            className="mt-2 text-xs font-semibold text-blue-600 hover:text-blue-700 cursor-pointer"
+                            className="mt-2 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 cursor-pointer"
                           >
                             + Add Doctor
                           </button>
@@ -728,24 +774,24 @@ export default function DoctorsPage() {
       {/* 1. CREATE DOCTOR MODAL (POST /api/doctors)                */}
       {/* ========================================================= */}
       {isCreateOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200" role="dialog" aria-modal="true">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-slate-900 dark:text-white" role="dialog" aria-modal="true">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-4">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                   </svg>
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900">Add New Doctor</h2>
-                  <p className="text-xs text-slate-500">Register a physician and assign to a department</p>
+                  <h2 className="text-lg font-bold text-slate-900 dark:text-white">Add New Doctor</h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Register a physician and assign to a department</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setIsCreateOpen(false)}
-                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors cursor-pointer"
+                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -754,14 +800,14 @@ export default function DoctorsPage() {
             </div>
 
             {createError && (
-              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+              <div className="mb-4 rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/40 p-3 text-xs text-red-700 dark:text-red-400">
                 {createError}
               </div>
             )}
 
             <form onSubmit={handleCreateSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                   Full Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -770,13 +816,13 @@ export default function DoctorsPage() {
                   placeholder="e.g. Dr. Ahmed Khan"
                   value={createForm.full_name}
                   onChange={(e) => setCreateForm({ ...createForm, full_name: e.target.value })}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                     Specialization <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -785,12 +831,12 @@ export default function DoctorsPage() {
                     placeholder="e.g. Cardiologist"
                     value={createForm.specialization}
                     onChange={(e) => setCreateForm({ ...createForm, specialization: e.target.value })}
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                    className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                     Years of Experience <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -800,20 +846,20 @@ export default function DoctorsPage() {
                     max={60}
                     value={createForm.years_of_experience}
                     onChange={(e) => setCreateForm({ ...createForm, years_of_experience: Number(e.target.value) })}
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                    className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                   Department Assignment <span className="text-red-500">*</span>
                 </label>
                 <select
                   required
                   value={createForm.department_id}
                   onChange={(e) => setCreateForm({ ...createForm, department_id: e.target.value })}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 >
                   <option value="" disabled>Select Department</option>
                   {departments.map((dept) => (
@@ -823,14 +869,14 @@ export default function DoctorsPage() {
                   ))}
                 </select>
                 {departments.length === 0 && (
-                  <p className="mt-1 text-xs text-amber-600">
+                  <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
                     No departments available. Please create a department first.
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                   Contact Phone Number <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -839,15 +885,15 @@ export default function DoctorsPage() {
                   placeholder="e.g. 03001234567"
                   value={createForm.contact_number}
                   onChange={(e) => setCreateForm({ ...createForm, contact_number: e.target.value })}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 font-mono"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 font-mono"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 mt-6">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800 mt-6">
                 <button
                   type="button"
                   onClick={() => setIsCreateOpen(false)}
-                  className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                  className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -878,22 +924,22 @@ export default function DoctorsPage() {
       {/* 2. VIEW DOCTOR MODAL (GET /api/doctors/{id})              */}
       {/* ========================================================= */}
       {viewDoctor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200" role="dialog" aria-modal="true">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-slate-900 dark:text-white" role="dialog" aria-modal="true">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-4">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold text-sm">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 font-bold text-sm">
                   {(viewDoctor.full_name || "D").charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900">{viewDoctor.full_name}</h2>
-                  <p className="text-xs text-slate-500">{viewDoctor.specialization}</p>
+                  <h2 className="text-lg font-bold text-slate-900 dark:text-white">{viewDoctor.full_name}</h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{viewDoctor.specialization}</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setViewDoctor(null)}
-                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors cursor-pointer"
+                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -902,7 +948,7 @@ export default function DoctorsPage() {
             </div>
 
             {isLoadingView ? (
-              <div className="py-8 text-center text-sm text-slate-500">
+              <div className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">
                 <svg className="h-5 w-5 animate-spin text-blue-600 mx-auto mb-2" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
@@ -911,68 +957,68 @@ export default function DoctorsPage() {
               </div>
             ) : (
               <div className="space-y-4 text-sm">
-                <div className="rounded-lg bg-slate-50 p-3.5 border border-slate-100 space-y-2.5">
+                <div className="rounded-lg bg-slate-50 dark:bg-slate-800/60 p-3.5 border border-slate-100 dark:border-slate-800 space-y-2.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-500 uppercase">Doctor ID</span>
-                    <span className="font-mono text-xs text-slate-800 select-all font-medium bg-white px-2 py-0.5 rounded border border-slate-200">
+                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Doctor ID</span>
+                    <span className="font-mono text-xs text-slate-800 dark:text-slate-200 select-all font-medium bg-white dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">
                       {viewDoctor.id}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-500 uppercase">Specialty</span>
-                    <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700 border border-blue-200">
+                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Specialty</span>
+                    <span className="inline-flex items-center rounded-md bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 text-xs font-semibold text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-900/50">
                       {viewDoctor.specialization}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-500 uppercase">Department</span>
-                    <span className="font-medium text-slate-900">
+                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Department</span>
+                    <span className="font-medium text-slate-900 dark:text-white">
                       {departmentMap.get(viewDoctor.department_id)?.name || "Unassigned"}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-500 uppercase">Experience</span>
-                    <span className="font-medium text-slate-900">{viewDoctor.years_of_experience} Years</span>
+                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Experience</span>
+                    <span className="font-medium text-slate-900 dark:text-white">{viewDoctor.years_of_experience} Years</span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-500 uppercase">Phone</span>
-                    <span className="font-mono font-medium text-slate-900">{viewDoctor.contact_number}</span>
+                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Phone</span>
+                    <span className="font-mono font-medium text-slate-900 dark:text-white">{viewDoctor.contact_number}</span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-500 uppercase">Date Registered</span>
-                    <span className="text-xs text-slate-700">{formatDate(viewDoctor.created_at)}</span>
+                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Date Registered</span>
+                    <span className="text-xs text-slate-700 dark:text-slate-300">{formatDate(viewDoctor.created_at)}</span>
                   </div>
                 </div>
 
                 {/* Treatments Performed Preview */}
                 <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-2">
                     Performed Treatments ({viewTreatments.length})
                   </h3>
                   {viewTreatments.length > 0 ? (
                     <div className="max-h-32 overflow-y-auto space-y-1 text-xs">
                       {viewTreatments.map((t: any, idx) => (
-                        <div key={idx} className="rounded bg-slate-50 p-2 border border-slate-100 flex items-center justify-between">
+                        <div key={idx} className="rounded bg-slate-50 dark:bg-slate-800/60 p-2 border border-slate-100 dark:border-slate-800 flex items-center justify-between text-slate-800 dark:text-slate-200">
                           <span>{t.treatment_name || t.diagnosis || `Treatment #${idx + 1}`}</span>
-                          <span className="text-slate-400 font-mono">{t.created_at ? formatDate(t.created_at) : ""}</span>
+                          <span className="text-slate-400 dark:text-slate-500 font-mono">{t.created_at ? formatDate(t.created_at) : ""}</span>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-xs text-slate-400 italic">No treatments recorded yet.</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500 italic">No treatments recorded yet.</p>
                   )}
                 </div>
 
-                <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+                <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
                   <button
                     type="button"
                     onClick={() => handleOpenEdit(viewDoctor)}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3.5 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-100 transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 dark:border-blue-900/60 bg-blue-50 dark:bg-blue-950/50 px-3.5 py-2 text-xs font-semibold text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/60 transition-colors cursor-pointer"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -982,7 +1028,7 @@ export default function DoctorsPage() {
                   <button
                     type="button"
                     onClick={() => setViewDoctor(null)}
-                    className="rounded-lg bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                    className="rounded-lg bg-slate-900 dark:bg-slate-700 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors cursor-pointer"
                   >
                     Close
                   </button>
@@ -997,24 +1043,24 @@ export default function DoctorsPage() {
       {/* 3. EDIT DOCTOR MODAL (PUT /api/doctors/{id})              */}
       {/* ========================================================= */}
       {editDoctor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200" role="dialog" aria-modal="true">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-slate-900 dark:text-white" role="dialog" aria-modal="true">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-4">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900">Edit Doctor Profile</h2>
-                  <p className="text-xs text-slate-500">Update medical qualifications and clinical assignments</p>
+                  <h2 className="text-lg font-bold text-slate-900 dark:text-white">Edit Doctor Profile</h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Update medical qualifications and clinical assignments</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setEditDoctor(null)}
-                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors cursor-pointer"
+                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -1023,14 +1069,14 @@ export default function DoctorsPage() {
             </div>
 
             {editError && (
-              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+              <div className="mb-4 rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/40 p-3 text-xs text-red-700 dark:text-red-400">
                 {editError}
               </div>
             )}
 
             <form onSubmit={handleEditSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                   Full Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -1038,13 +1084,13 @@ export default function DoctorsPage() {
                   required
                   value={editForm.full_name}
                   onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                     Specialization <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -1052,12 +1098,12 @@ export default function DoctorsPage() {
                     required
                     value={editForm.specialization}
                     onChange={(e) => setEditForm({ ...editForm, specialization: e.target.value })}
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                    className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                     Years of Experience <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -1067,20 +1113,20 @@ export default function DoctorsPage() {
                     max={60}
                     value={editForm.years_of_experience}
                     onChange={(e) => setEditForm({ ...editForm, years_of_experience: Number(e.target.value) })}
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                    className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                   Department Assignment <span className="text-red-500">*</span>
                 </label>
                 <select
                   required
                   value={editForm.department_id}
                   onChange={(e) => setEditForm({ ...editForm, department_id: e.target.value })}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 >
                   <option value="" disabled>Select Department</option>
                   {departments.map((dept) => (
@@ -1092,7 +1138,7 @@ export default function DoctorsPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                   Contact Phone Number <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -1100,15 +1146,15 @@ export default function DoctorsPage() {
                   required
                   value={editForm.contact_number}
                   onChange={(e) => setEditForm({ ...editForm, contact_number: e.target.value })}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 font-mono"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 font-mono"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 mt-6">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800 mt-6">
                 <button
                   type="button"
                   onClick={() => setEditDoctor(null)}
-                  className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                  className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -1139,31 +1185,31 @@ export default function DoctorsPage() {
       {/* 4. DELETE CONFIRMATION MODAL (DELETE /api/doctors/{id})   */}
       {/* ========================================================= */}
       {deleteTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="w-full max-w-md rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200 text-slate-900 dark:text-white" role="dialog" aria-modal="true">
             <div className="flex items-center gap-3 mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 text-red-600 shrink-0">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
               <div>
-                <h2 className="text-lg font-bold text-slate-900">Delete Doctor</h2>
-                <p className="text-xs text-slate-500">This action cannot be undone</p>
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">Delete Doctor</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400">This action cannot be undone</p>
               </div>
             </div>
 
             {deleteError && (
-              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+              <div className="mb-4 rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/40 p-3 text-xs text-red-700 dark:text-red-400">
                 {deleteError}
               </div>
             )}
 
-            <div className="rounded-lg bg-slate-50 p-3.5 border border-slate-100 mb-6 text-sm text-slate-700">
+            <div className="rounded-lg bg-slate-50 dark:bg-slate-800/60 p-3.5 border border-slate-100 dark:border-slate-800 mb-6 text-sm text-slate-700 dark:text-slate-300">
               <p>
-                Are you sure you want to remove <strong className="text-slate-900 font-semibold">{deleteTarget.full_name}</strong> ({deleteTarget.specialization}) from the hospital medical staff registry?
+                Are you sure you want to remove <strong className="text-slate-900 dark:text-white font-semibold">{deleteTarget.full_name}</strong> ({deleteTarget.specialization}) from the hospital medical staff registry?
               </p>
-              <p className="mt-2 text-xs text-slate-500 font-mono">
+              <p className="mt-2 text-xs text-slate-500 dark:text-slate-400 font-mono">
                 Doctor ID: {deleteTarget.id}
               </p>
             </div>
@@ -1172,7 +1218,7 @@ export default function DoctorsPage() {
               <button
                 type="button"
                 onClick={() => setDeleteTarget(null)}
-                className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors cursor-pointer"
               >
                 Cancel
               </button>

@@ -14,6 +14,7 @@ import {
   Toast,
   ToastData,
 } from "@/components/common";
+import { Sparkline } from "@/components/dashboard/sparkline";
 
 const PAYMENT_STATUSES = [
   { value: "pending", label: "Pending" },
@@ -376,7 +377,7 @@ export default function BillingPage() {
     const s = status?.toLowerCase() || "";
     if (s === "paid") {
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200">
+        <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/60">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
           Paid
         </span>
@@ -384,7 +385,7 @@ export default function BillingPage() {
     }
     if (s === "pending") {
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-md bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 border border-amber-200">
+        <span className="inline-flex items-center gap-1.5 rounded-md bg-amber-50 dark:bg-amber-950/60 px-2.5 py-1 text-xs font-semibold text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-900/60">
           <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
           Pending
         </span>
@@ -392,14 +393,14 @@ export default function BillingPage() {
     }
     if (s === "partially_paid" || s === "partial") {
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-md bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700 border border-blue-200">
+        <span className="inline-flex items-center gap-1.5 rounded-md bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 text-xs font-semibold text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-900/60">
           <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
           Partially Paid
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-md bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-700 border border-rose-200">
+      <span className="inline-flex items-center gap-1.5 rounded-md bg-rose-50 dark:bg-rose-950/60 px-2.5 py-1 text-xs font-semibold text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-900/60">
         <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
         {status}
       </span>
@@ -432,10 +433,10 @@ export default function BillingPage() {
       header: "Invoice Reference",
       render: (item: EnrichedBill) => (
         <div>
-          <span className="font-mono text-xs font-semibold text-slate-900 block">
+          <span className="font-mono text-xs font-semibold text-slate-900 dark:text-white block">
             INV-{item.id.slice(0, 8).toUpperCase()}
           </span>
-          <span className="text-[11px] text-slate-400">
+          <span className="text-[11px] text-slate-400 dark:text-slate-500">
             Issued {formatDate(item.date_issued)}
           </span>
         </div>
@@ -447,14 +448,14 @@ export default function BillingPage() {
         const initial = (item.patient_name || "P").charAt(0).toUpperCase();
         return (
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold text-xs ring-2 ring-blue-50">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-400 font-bold text-xs ring-2 ring-blue-50 dark:ring-blue-900/40">
               {initial}
             </div>
             <div>
-              <p className="font-semibold text-slate-900 leading-tight">
+              <p className="font-semibold text-slate-900 dark:text-white leading-tight">
                 {item.patient_name}
               </p>
-              <p className="text-[11px] font-mono text-slate-500 leading-tight mt-0.5">
+              <p className="text-[11px] font-mono text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
                 {item.patient_phone} • {item.patient_gender}
               </p>
             </div>
@@ -466,10 +467,10 @@ export default function BillingPage() {
       header: "Total Amount",
       render: (item: EnrichedBill) => (
         <div>
-          <span className="text-sm font-bold text-slate-900 block font-mono">
+          <span className="text-sm font-bold text-slate-900 dark:text-white block font-mono">
             {formatCurrency(item.total_amount)}
           </span>
-          <span className="text-[11px] text-slate-400">Hospital Bill</span>
+          <span className="text-[11px] text-slate-400 dark:text-slate-500">Hospital Bill</span>
         </div>
       ),
     },
@@ -487,7 +488,7 @@ export default function BillingPage() {
             <button
               type="button"
               onClick={() => handleQuickMarkPaid(item)}
-              className="rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700 hover:bg-emerald-100 transition-colors cursor-pointer"
+              className="rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors cursor-pointer"
               title="Mark bill as Paid"
             >
               Mark Paid
@@ -498,7 +499,7 @@ export default function BillingPage() {
           <button
             type="button"
             onClick={() => setViewInvoice(item)}
-            className="rounded-lg border border-slate-200 bg-white p-1.5 text-slate-500 hover:bg-slate-50 hover:text-blue-600 transition-colors cursor-pointer"
+            className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/80 p-1.5 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
             title="View Invoice Receipt"
           >
             <svg
@@ -521,7 +522,7 @@ export default function BillingPage() {
           <button
             type="button"
             onClick={() => handleOpenEdit(item)}
-            className="rounded-lg border border-slate-200 bg-white p-1.5 text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer"
+            className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/80 p-1.5 text-slate-500 dark:text-slate-400 hover:bg-blue-50 dark:hover:bg-blue-950/50 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
             title="Edit Bill"
           >
             <svg
@@ -544,7 +545,7 @@ export default function BillingPage() {
           <button
             type="button"
             onClick={() => handleOpenDelete(item)}
-            className="rounded-lg border border-slate-200 bg-white p-1.5 text-slate-500 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer"
+            className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/80 p-1.5 text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-950/50 hover:text-red-600 dark:hover:text-red-400 transition-colors cursor-pointer"
             title="Delete Bill"
           >
             <svg
@@ -620,59 +621,143 @@ export default function BillingPage() {
         </div>
       )}
 
-      {/* Metrics Row */}
+      {/* Metrics Row with Sparklines */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Invoiced */}
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Total Billed Revenue
-          </p>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-bold text-slate-900 font-mono">
-              {formatCurrency(metrics.totalRevenue)}
-            </span>
+        <div className="flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-5 shadow-xs">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Total Billed Revenue
+              </p>
+              <div className="mt-0.5 flex items-baseline gap-1.5">
+                <span className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white font-mono">
+                  {formatCurrency(metrics.totalRevenue)}
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">{bills.length} total generated bills</p>
+            </div>
           </div>
-          <p className="mt-1 text-xs text-slate-500">{bills.length} total generated bills</p>
+          <Sparkline data={[140, 180, 160, 210, 240, 220, 280, 310]} color="blue" width={68} height={32} />
         </div>
 
         {/* Collected / Paid */}
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Collected Revenue
-          </p>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-bold text-emerald-600 font-mono">
-              {formatCurrency(metrics.paidRevenue)}
-            </span>
+        <div className="flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-5 shadow-xs">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/50">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Collected Revenue
+              </p>
+              <div className="mt-0.5 flex items-baseline gap-1.5">
+                <span className="text-xl sm:text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">
+                  {formatCurrency(metrics.paidRevenue)}
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">{metrics.paidCount} paid invoices</p>
+            </div>
           </div>
-          <p className="mt-1 text-xs text-slate-500">{metrics.paidCount} paid invoices</p>
+          <Sparkline data={[90, 120, 140, 130, 180, 200, 220, 260]} color="emerald" width={68} height={32} />
         </div>
 
         {/* Pending Receivables */}
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Pending Receivables
-          </p>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-bold text-amber-600 font-mono">
-              {formatCurrency(metrics.pendingRevenue)}
-            </span>
+        <div className="flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-5 shadow-xs">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-900/50">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Pending Receivables
+              </p>
+              <div className="mt-0.5 flex items-baseline gap-1.5">
+                <span className="text-xl sm:text-2xl font-extrabold text-amber-600 dark:text-amber-400 font-mono">
+                  {formatCurrency(metrics.pendingRevenue)}
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">{metrics.pendingCount} awaiting payment</p>
+            </div>
           </div>
-          <p className="mt-1 text-xs text-slate-500">{metrics.pendingCount} awaiting payment</p>
+          <Sparkline data={[50, 60, 45, 70, 60, 55, 60, 50]} color="amber" width={68} height={32} />
         </div>
 
         {/* Overdue / Actions */}
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Overdue Accounts
-          </p>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl sm:text-3xl font-bold text-rose-600">
-              {metrics.overdueCount}
-            </span>
-            <span className="text-xs text-slate-500 font-medium">Invoices overdue</span>
+        <div className="flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-5 shadow-xs">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/50">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Overdue Accounts
+              </p>
+              <div className="mt-0.5 flex items-baseline gap-2">
+                <span className="text-2xl font-extrabold text-rose-600 dark:text-rose-400">
+                  {metrics.overdueCount}
+                </span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Invoices overdue</span>
+              </div>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">Requires follow-up</p>
+            </div>
           </div>
-          <p className="mt-1 text-xs text-slate-500">Requires follow-up</p>
+          <Sparkline data={[4, 6, 5, 8, 6, 7, 5, metrics.overdueCount || 4]} color="rose" width={68} height={32} />
         </div>
       </div>
 
@@ -688,7 +773,7 @@ export default function BillingPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-xs sm:text-sm text-slate-700 focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100"
+            className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 py-2 px-3 text-xs sm:text-sm text-slate-700 dark:text-slate-200 focus:border-blue-600 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
           >
             <option value="all">All Statuses</option>
             {PAYMENT_STATUSES.map((st) => (
@@ -702,7 +787,7 @@ export default function BillingPage() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-xs sm:text-sm text-slate-700 focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100"
+            className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 py-2 px-3 text-xs sm:text-sm text-slate-700 dark:text-slate-200 focus:border-blue-600 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
           >
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
@@ -739,14 +824,14 @@ export default function BillingPage() {
       {/* ========================================================= */}
       {isCreateOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs p-4 overflow-y-auto"
           role="dialog"
           aria-modal="true"
         >
-          <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+          <div className="w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-4">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5"
@@ -763,8 +848,8 @@ export default function BillingPage() {
                   </svg>
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900">Generate Patient Bill</h2>
-                  <p className="text-xs text-slate-500">
+                  <h2 className="text-lg font-bold text-slate-900 dark:text-white">Generate Patient Bill</h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Create a new invoice charge for hospital treatment and services
                   </p>
                 </div>
@@ -772,7 +857,7 @@ export default function BillingPage() {
               <button
                 type="button"
                 onClick={() => setIsCreateOpen(false)}
-                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors cursor-pointer"
+                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -788,7 +873,7 @@ export default function BillingPage() {
             </div>
 
             {createError && (
-              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+              <div className="mb-4 rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/40 p-3 text-xs text-red-700 dark:text-red-300">
                 {createError}
               </div>
             )}
@@ -796,7 +881,7 @@ export default function BillingPage() {
             <form onSubmit={handleCreateSubmit} className="space-y-4">
               {/* Patient Selection */}
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                   Select Patient <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -805,7 +890,7 @@ export default function BillingPage() {
                   onChange={(e) =>
                     setCreateForm({ ...createForm, patient_id: e.target.value })
                   }
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 >
                   <option value="" disabled>
                     -- Select Patient --
@@ -817,7 +902,7 @@ export default function BillingPage() {
                   ))}
                 </select>
                 {createForm.patient_id && (
-                  <p className="mt-1 text-[11px] font-mono text-slate-400">
+                  <p className="mt-1 text-[11px] font-mono text-slate-400 dark:text-slate-500">
                     Patient ID: {createForm.patient_id}
                   </p>
                 )}
@@ -826,7 +911,7 @@ export default function BillingPage() {
               {/* Amount & Status Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                     Total Amount (PKR) <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -842,12 +927,12 @@ export default function BillingPage() {
                         total_amount: Number(e.target.value),
                       })
                     }
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 font-mono"
+                    className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 font-mono"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                     Payment Status <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -859,7 +944,7 @@ export default function BillingPage() {
                         payment_status: e.target.value,
                       })
                     }
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                    className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                   >
                     {PAYMENT_STATUSES.map((st) => (
                       <option key={st.value} value={st.value}>
@@ -872,7 +957,7 @@ export default function BillingPage() {
 
               {/* Date Issued */}
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                   Date Issued <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -885,15 +970,15 @@ export default function BillingPage() {
                       date_issued: e.target.value,
                     })
                   }
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 mt-6">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800 mt-6">
                 <button
                   type="button"
                   onClick={() => setIsCreateOpen(false)}
-                  className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                  className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -925,14 +1010,14 @@ export default function BillingPage() {
       {/* ========================================================= */}
       {editBill && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs p-4 overflow-y-auto"
           role="dialog"
           aria-modal="true"
         >
-          <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+          <div className="w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-4">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5"
@@ -949,8 +1034,8 @@ export default function BillingPage() {
                   </svg>
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900">Edit Invoice</h2>
-                  <p className="text-xs text-slate-500">
+                  <h2 className="text-lg font-bold text-slate-900 dark:text-white">Edit Invoice</h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Update billing charges, issuance date, or payment status
                   </p>
                 </div>
@@ -958,7 +1043,7 @@ export default function BillingPage() {
               <button
                 type="button"
                 onClick={() => setEditBill(null)}
-                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors cursor-pointer"
+                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -974,7 +1059,7 @@ export default function BillingPage() {
             </div>
 
             {editError && (
-              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+              <div className="mb-4 rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/40 p-3 text-xs text-red-700 dark:text-red-300">
                 {editError}
               </div>
             )}
@@ -982,7 +1067,7 @@ export default function BillingPage() {
             <form onSubmit={handleEditSubmit} className="space-y-4">
               {/* Patient Selection */}
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                   Patient <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -991,7 +1076,7 @@ export default function BillingPage() {
                   onChange={(e) =>
                     setEditForm({ ...editForm, patient_id: e.target.value })
                   }
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 >
                   {patients.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -1004,7 +1089,7 @@ export default function BillingPage() {
               {/* Amount & Status */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                     Total Amount (PKR) <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -1019,12 +1104,12 @@ export default function BillingPage() {
                         total_amount: Number(e.target.value),
                       })
                     }
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 font-mono"
+                    className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40 font-mono"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                     Payment Status <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -1036,7 +1121,7 @@ export default function BillingPage() {
                         payment_status: e.target.value,
                       })
                     }
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                    className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                   >
                     {PAYMENT_STATUSES.map((st) => (
                       <option key={st.value} value={st.value}>
@@ -1049,7 +1134,7 @@ export default function BillingPage() {
 
               {/* Date Issued */}
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                   Date Issued <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -1062,15 +1147,15 @@ export default function BillingPage() {
                       date_issued: e.target.value,
                     })
                   }
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 mt-6">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800 mt-6">
                 <button
                   type="button"
                   onClick={() => setEditBill(null)}
-                  className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                  className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -1102,26 +1187,26 @@ export default function BillingPage() {
       {/* ========================================================= */}
       {viewInvoice && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 dark:bg-black/75 backdrop-blur-xs p-4 overflow-y-auto"
           role="dialog"
           aria-modal="true"
         >
-          <div className="w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-7 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="w-full max-w-xl rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-7 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
               <div className="flex items-center gap-2.5">
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white font-bold text-sm shadow-xs">
                   HMS
                 </div>
                 <div>
-                  <h2 className="text-base font-bold text-slate-900">Hospital Billing Statement</h2>
-                  <p className="text-xs text-slate-500">Official Patient Fee Invoice</p>
+                  <h2 className="text-base font-bold text-slate-900 dark:text-white">Hospital Billing Statement</h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Official Patient Fee Invoice</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setViewInvoice(null)}
-                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors cursor-pointer"
+                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -1139,20 +1224,20 @@ export default function BillingPage() {
             {/* Invoice Content */}
             <div className="py-6 space-y-6 text-sm">
               {/* Top Meta Details */}
-              <div className="grid grid-cols-2 gap-4 rounded-xl bg-slate-50 p-4 border border-slate-100">
+              <div className="grid grid-cols-2 gap-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 p-4 border border-slate-100 dark:border-slate-800">
                 <div>
-                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+                  <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
                     Invoice Number
                   </span>
-                  <span className="font-mono text-sm font-bold text-slate-900">
+                  <span className="font-mono text-sm font-bold text-slate-900 dark:text-white">
                     INV-{viewInvoice.id.slice(0, 8).toUpperCase()}
                   </span>
-                  <span className="text-[11px] text-slate-500 block mt-0.5">
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 block mt-0.5">
                     Date: {formatDate(viewInvoice.date_issued)}
                   </span>
                 </div>
                 <div className="text-right">
-                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                  <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">
                     Status
                   </span>
                   <div>{renderStatusBadge(viewInvoice.payment_status)}</div>
@@ -1160,54 +1245,54 @@ export default function BillingPage() {
               </div>
 
               {/* Billed To Patient Details */}
-              <div className="rounded-xl border border-slate-200/80 p-4">
-                <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-2">
+              <div className="rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 p-4">
+                <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-2">
                   Billed To
                 </span>
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-bold text-slate-900 text-base">
+                    <h3 className="font-bold text-slate-900 dark:text-white text-base">
                       {viewInvoice.patient_name}
                     </h3>
-                    <p className="text-xs text-slate-500 mt-0.5">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                       Phone: {viewInvoice.patient_phone} • Gender: {viewInvoice.patient_gender}
                     </p>
                   </div>
-                  <div className="text-right font-mono text-xs text-slate-400">
+                  <div className="text-right font-mono text-xs text-slate-400 dark:text-slate-500">
                     ID: {viewInvoice.patient_id.slice(0, 8)}...
                   </div>
                 </div>
               </div>
 
               {/* Itemized Table */}
-              <div className="rounded-xl border border-slate-200 overflow-hidden">
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                  <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 font-semibold border-b border-slate-200 dark:border-slate-700">
                     <tr>
                       <th className="py-2.5 px-4">Description</th>
                       <th className="py-2.5 px-4 text-center">Department</th>
                       <th className="py-2.5 px-4 text-right">Amount</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 text-slate-700">
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
                     <tr>
-                      <td className="py-3 px-4 font-medium text-slate-900">
+                      <td className="py-3 px-4 font-medium text-slate-900 dark:text-white">
                         Hospital Care, Diagnostics & Clinical Treatment
                       </td>
-                      <td className="py-3 px-4 text-center text-slate-500">
+                      <td className="py-3 px-4 text-center text-slate-500 dark:text-slate-400">
                         General Ward
                       </td>
-                      <td className="py-3 px-4 text-right font-mono font-semibold text-slate-900">
+                      <td className="py-3 px-4 text-right font-mono font-semibold text-slate-900 dark:text-white">
                         {formatCurrency(viewInvoice.total_amount)}
                       </td>
                     </tr>
                   </tbody>
-                  <tfoot className="bg-slate-50/80 font-semibold text-slate-900 border-t border-slate-200">
+                  <tfoot className="bg-slate-50/80 dark:bg-slate-800/60 font-semibold text-slate-900 dark:text-white border-t border-slate-200 dark:border-slate-700">
                     <tr>
-                      <td colSpan={2} className="py-3 px-4 text-right text-xs uppercase tracking-wider text-slate-500">
+                      <td colSpan={2} className="py-3 px-4 text-right text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
                         Total Amount Due:
                       </td>
-                      <td className="py-3 px-4 text-right font-mono text-base text-blue-600">
+                      <td className="py-3 px-4 text-right font-mono text-base text-blue-600 dark:text-blue-400">
                         {formatCurrency(viewInvoice.total_amount)}
                       </td>
                     </tr>
@@ -1217,11 +1302,11 @@ export default function BillingPage() {
             </div>
 
             {/* Modal Actions */}
-            <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+            <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors cursor-pointer"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -1258,7 +1343,7 @@ export default function BillingPage() {
                 <button
                   type="button"
                   onClick={() => setViewInvoice(null)}
-                  className="rounded-lg bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                  className="rounded-lg bg-slate-900 dark:bg-slate-700 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors cursor-pointer"
                 >
                   Close
                 </button>

@@ -21,6 +21,7 @@ import {
   Toast,
   ToastData,
 } from "@/components/common";
+import { Sparkline } from "@/components/dashboard/sparkline";
 
 export default function TreatmentsPage() {
   const cachedTreatments = treatmentService.getCachedTreatments();
@@ -325,7 +326,7 @@ export default function TreatmentsPage() {
       header: "Patient",
       render: (t) => (
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-100 font-bold text-xs text-blue-700 select-none">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-950/70 font-bold text-xs text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-900/50 select-none">
             {t.patient?.name
               ? t.patient.name
                   .split(" ")
@@ -339,11 +340,11 @@ export default function TreatmentsPage() {
             <button
               type="button"
               onClick={() => setViewTreatment(t)}
-              className="font-semibold text-slate-900 hover:text-blue-600 transition-colors text-left"
+              className="font-semibold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-left cursor-pointer"
             >
               {t.patient?.name || `Patient #${t.patient_id.slice(0, 8)}`}
             </button>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-400 dark:text-slate-500 font-mono">
               {t.patient?.phone_number || `ID: ${t.patient_id.slice(0, 8)}...`}
             </p>
           </div>
@@ -354,10 +355,10 @@ export default function TreatmentsPage() {
       header: "Attending Doctor",
       render: (t) => (
         <div className="flex flex-col">
-          <span className="font-semibold text-slate-900">
+          <span className="font-semibold text-slate-900 dark:text-white">
             {t.doctor?.full_name || `Dr. #${t.doctor_id.slice(0, 8)}`}
           </span>
-          <span className="text-xs text-slate-500">
+          <span className="text-xs text-slate-500 dark:text-slate-400">
             {t.doctor?.specialization || "Physician"}
           </span>
         </div>
@@ -366,8 +367,8 @@ export default function TreatmentsPage() {
     {
       header: "Clinical Diagnosis",
       render: (t) => (
-        <span className="inline-flex items-center gap-1.5 rounded-md bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 border border-amber-200/60">
-          <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+        <span className="inline-flex items-center gap-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/50 px-2.5 py-1 text-xs font-semibold text-amber-800 dark:text-amber-300 border border-amber-200/60 dark:border-amber-900/50">
+          <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
           {t.diagnosis}
         </span>
       ),
@@ -376,17 +377,17 @@ export default function TreatmentsPage() {
       header: "Prescribed Medication",
       render: (t) =>
         t.medication ? (
-          <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 border border-emerald-200/60">
+          <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-900/50">
             {t.medication}
           </span>
         ) : (
-          <span className="text-xs text-slate-400 italic">None prescribed</span>
+          <span className="text-xs text-slate-400 dark:text-slate-500 italic">None prescribed</span>
         ),
     },
     {
       header: "Treatment Date",
       render: (t) => (
-        <span className="text-xs font-medium text-slate-700">
+        <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
           {formatDate(t.treatment_date)}
         </span>
       ),
@@ -399,7 +400,7 @@ export default function TreatmentsPage() {
           <button
             type="button"
             onClick={() => setViewTreatment(t)}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
             title="View treatment dossier"
             aria-label="View treatment dossier"
           >
@@ -427,7 +428,7 @@ export default function TreatmentsPage() {
           <button
             type="button"
             onClick={() => handleOpenEdit(t)}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            className="rounded-lg p-1.5 text-slate-400 hover:bg-blue-50 dark:hover:bg-blue-950/60 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
             title="Edit treatment"
             aria-label="Edit treatment"
           >
@@ -449,7 +450,7 @@ export default function TreatmentsPage() {
           <button
             type="button"
             onClick={() => setDeleteTarget(t)}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+            className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 dark:hover:bg-red-950/60 hover:text-red-600 dark:hover:text-red-400 transition-colors cursor-pointer"
             title="Delete treatment"
             aria-label="Delete treatment"
           >
@@ -485,6 +486,7 @@ export default function TreatmentsPage() {
         badge={{
           text: `${treatments.length} Records`,
           color: "blue",
+          pulse: true,
         }}
         onRefresh={() => loadData(true)}
         isRefreshing={isRefreshing}
@@ -495,114 +497,126 @@ export default function TreatmentsPage() {
         }}
       />
 
-      {/* Metric Summary Cards */}
+      {/* Metric Summary Cards with Sparklines */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.8}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
-              />
-            </svg>
+        <div className="flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-5 shadow-xs">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Total Treatments
+              </p>
+              <p className="mt-0.5 text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                {metrics.total}
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
-              Total Treatments
-            </p>
-            <p className="mt-0.5 text-2xl font-bold tracking-tight text-slate-900">
-              {metrics.total}
-            </p>
-          </div>
+          <Sparkline data={[12, 14, 16, 18, 17, 21, metrics.total || 22]} color="blue" width={70} height={32} />
         </div>
 
-        <div className="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.8}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-              />
-            </svg>
+        <div className="flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-5 shadow-xs">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/50">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Treated Patients
+              </p>
+              <p className="mt-0.5 text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                {metrics.uniquePatients}
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
-              Treated Patients
-            </p>
-            <p className="mt-0.5 text-2xl font-bold tracking-tight text-slate-900">
-              {metrics.uniquePatients}
-            </p>
-          </div>
+          <Sparkline data={[8, 10, 11, 14, 13, 16, metrics.uniquePatients || 17]} color="emerald" width={70} height={32} />
         </div>
 
-        <div className="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.8}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              />
-            </svg>
+        <div className="flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-5 shadow-xs">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Attending Doctors
+              </p>
+              <p className="mt-0.5 text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                {metrics.uniqueDoctors}
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
-              Attending Doctors
-            </p>
-            <p className="mt-0.5 text-2xl font-bold tracking-tight text-slate-900">
-              {metrics.uniqueDoctors}
-            </p>
-          </div>
+          <Sparkline data={[4, 4, 5, 5, 6, 7, metrics.uniqueDoctors || 8]} color="purple" width={70} height={32} />
         </div>
 
-        <div className="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.8}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-              />
-            </svg>
+        <div className="flex items-center justify-between rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-5 shadow-xs">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-900/50">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Prescriptions Issued
+              </p>
+              <p className="mt-0.5 text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                {metrics.prescribedCount}
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
-              Prescriptions Issued
-            </p>
-            <p className="mt-0.5 text-2xl font-bold tracking-tight text-slate-900">
-              {metrics.prescribedCount}
-            </p>
-          </div>
+          <Sparkline data={[10, 11, 13, 15, 14, 17, metrics.prescribedCount || 18]} color="amber" width={70} height={32} />
         </div>
       </div>
 
@@ -668,41 +682,41 @@ export default function TreatmentsPage() {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-200"
         >
-          <div className="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+          <div className="relative w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xl text-slate-900 dark:text-white">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Record Medical Treatment</h3>
-                <p className="text-xs text-slate-500">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Record Medical Treatment</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Assign attending doctor, patient, clinical diagnosis, and medications.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setIsCreateOpen(false)}
-                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 cursor-pointer"
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
               >
                 &times;
               </button>
             </div>
 
             {createError && (
-              <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+              <div className="mt-4 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/40 p-3 text-xs text-red-700 dark:text-red-400">
                 {createError}
               </div>
             )}
 
             <form onSubmit={handleCreateSubmit} className="mt-4 space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   Attending Doctor <span className="text-red-500">*</span>
                 </label>
                 <select
                   required
                   value={createForm.doctor_id}
                   onChange={(e) => setCreateForm({ ...createForm, doctor_id: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 >
                   <option value="" disabled>
                     -- Select Doctor --
@@ -716,14 +730,14 @@ export default function TreatmentsPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   Patient <span className="text-red-500">*</span>
                 </label>
                 <select
                   required
                   value={createForm.patient_id}
                   onChange={(e) => setCreateForm({ ...createForm, patient_id: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 >
                   <option value="" disabled>
                     -- Select Patient --
@@ -737,7 +751,7 @@ export default function TreatmentsPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   Treatment Date <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -747,12 +761,12 @@ export default function TreatmentsPage() {
                   onChange={(e) =>
                     setCreateForm({ ...createForm, treatment_date: e.target.value })
                   }
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   Diagnosis <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -761,12 +775,12 @@ export default function TreatmentsPage() {
                   placeholder="e.g. High fever, Acute Bronchitis, Migraine"
                   value={createForm.diagnosis}
                   onChange={(e) => setCreateForm({ ...createForm, diagnosis: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   Medication & Prescriptions
                 </label>
                 <textarea
@@ -774,16 +788,16 @@ export default function TreatmentsPage() {
                   placeholder="e.g. Paracetamol 500mg, Amoxicillin 250mg TDS"
                   value={createForm.medication}
                   onChange={(e) => setCreateForm({ ...createForm, medication: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setIsCreateOpen(false)}
                   disabled={isCreating}
-                  className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
+                  className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -812,41 +826,41 @@ export default function TreatmentsPage() {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-200"
         >
-          <div className="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+          <div className="relative w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xl text-slate-900 dark:text-white">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Edit Treatment Record</h3>
-                <p className="text-xs text-slate-500">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Edit Treatment Record</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Update diagnosis, physician, or medication instructions.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setEditTreatment(null)}
-                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 cursor-pointer"
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
               >
                 &times;
               </button>
             </div>
 
             {editError && (
-              <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+              <div className="mt-4 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/40 p-3 text-xs text-red-700 dark:text-red-400">
                 {editError}
               </div>
             )}
 
             <form onSubmit={handleEditSubmit} className="mt-4 space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   Attending Doctor <span className="text-red-500">*</span>
                 </label>
                 <select
                   required
                   value={editForm.doctor_id}
                   onChange={(e) => setEditForm({ ...editForm, doctor_id: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 >
                   {doctors.map((d) => (
                     <option key={d.id} value={d.id}>
@@ -857,14 +871,14 @@ export default function TreatmentsPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   Patient <span className="text-red-500">*</span>
                 </label>
                 <select
                   required
                   value={editForm.patient_id}
                   onChange={(e) => setEditForm({ ...editForm, patient_id: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 >
                   {patients.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -875,7 +889,7 @@ export default function TreatmentsPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   Treatment Date <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -883,12 +897,12 @@ export default function TreatmentsPage() {
                   required
                   value={editForm.treatment_date}
                   onChange={(e) => setEditForm({ ...editForm, treatment_date: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   Diagnosis <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -896,28 +910,28 @@ export default function TreatmentsPage() {
                   required
                   value={editForm.diagnosis}
                   onChange={(e) => setEditForm({ ...editForm, diagnosis: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
                   Medication & Prescriptions
                 </label>
                 <textarea
                   rows={2}
                   value={editForm.medication}
                   onChange={(e) => setEditForm({ ...editForm, medication: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm text-slate-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/40"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setEditTreatment(null)}
                   disabled={isUpdating}
-                  className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
+                  className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -948,7 +962,7 @@ export default function TreatmentsPage() {
         description={
           <p>
             Are you sure you want to delete the treatment record for{" "}
-            <strong className="font-semibold text-slate-900">
+            <strong className="font-semibold text-slate-900 dark:text-white">
               {deleteTarget?.patient?.name || "Patient"}
             </strong>{" "}
             diagnosed with <em>&ldquo;{deleteTarget?.diagnosis}&rdquo;</em>?
@@ -966,88 +980,88 @@ export default function TreatmentsPage() {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-200"
         >
-          <div className="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl">
-            <div className="flex items-start justify-between border-b border-slate-100 pb-4">
+          <div className="relative w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xl text-slate-900 dark:text-white">
+            <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
               <div>
-                <h3 className="text-xl font-bold text-slate-900">Treatment Dossier</h3>
-                <p className="text-xs font-mono text-slate-400 mt-0.5">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Treatment Dossier</h3>
+                <p className="text-xs font-mono text-slate-400 dark:text-slate-500 mt-0.5">
                   Record ID: {viewTreatment.id}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setViewTreatment(null)}
-                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 cursor-pointer"
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
               >
                 &times;
               </button>
             </div>
 
             <div className="mt-4 space-y-3.5">
-              <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
+              <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
                   Patient Information
                 </p>
-                <p className="text-base font-bold text-slate-900">
+                <p className="text-base font-bold text-slate-900 dark:text-white">
                   {viewTreatment.patient?.name || "Unknown Patient"}
                 </p>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                   {viewTreatment.patient?.gender} • Phone:{" "}
                   {viewTreatment.patient?.phone_number || "N/A"}
                 </p>
               </div>
 
-              <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
+              <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
                   Attending Physician
                 </p>
-                <p className="text-base font-bold text-slate-900">
+                <p className="text-base font-bold text-slate-900 dark:text-white">
                   Dr. {viewTreatment.doctor?.full_name || "Unknown Physician"}
                 </p>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                   Specialization: {viewTreatment.doctor?.specialization || "General"}
                 </p>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-3.5">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 p-3.5">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                     Clinical Diagnosis
                   </p>
-                  <p className="mt-1 font-semibold text-amber-800">
+                  <p className="mt-1 font-semibold text-amber-800 dark:text-amber-300">
                     {viewTreatment.diagnosis}
                   </p>
                 </div>
-                <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-3.5">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 p-3.5">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                     Treatment Date
                   </p>
-                  <p className="mt-1 font-semibold text-slate-900">
+                  <p className="mt-1 font-semibold text-slate-900 dark:text-white">
                     {formatDate(viewTreatment.treatment_date)}
                   </p>
                 </div>
               </div>
 
-              <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
+              <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
                   Prescription & Medication
                 </p>
-                <p className="text-sm font-medium text-slate-800">
+                <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
                   {viewTreatment.medication || "No medication specified."}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-5">
+            <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-4 mt-5">
               <button
                 type="button"
                 onClick={() => {
                   setDeleteTarget(viewTreatment);
                   setViewTreatment(null);
                 }}
-                className="text-xs font-semibold text-red-600 hover:underline cursor-pointer"
+                className="text-xs font-semibold text-red-600 dark:text-red-400 hover:underline cursor-pointer"
               >
                 Delete Record
               </button>
@@ -1055,14 +1069,14 @@ export default function TreatmentsPage() {
                 <button
                   type="button"
                   onClick={() => handleOpenEdit(viewTreatment)}
-                  className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                  className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors cursor-pointer"
                 >
                   Edit Record
                 </button>
                 <button
                   type="button"
                   onClick={() => setViewTreatment(null)}
-                  className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                  className="rounded-xl bg-slate-900 dark:bg-slate-700 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors cursor-pointer"
                 >
                   Close
                 </button>

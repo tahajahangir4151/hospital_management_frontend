@@ -28,10 +28,10 @@ export default function DashboardLayout({
 
   if (isChecking) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
-        <div className="flex items-center gap-3 text-sm font-medium text-slate-600">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-[#0B0F19] text-slate-600 dark:text-slate-300">
+        <div className="flex items-center gap-3 text-sm font-medium">
           <svg
-            className="h-5 w-5 animate-spin text-blue-600"
+            className="h-5 w-5 animate-spin text-indigo-600 dark:text-indigo-400"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -61,7 +61,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen w-full bg-slate-50 text-slate-900">
+    <div className="flex min-h-screen w-full bg-slate-50 dark:bg-[#0B0F19] text-slate-900 dark:text-slate-100 transition-colors duration-200">
       {/* Desktop Fixed Sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-30 lg:flex lg:w-64 lg:flex-col">
         <Sidebar />

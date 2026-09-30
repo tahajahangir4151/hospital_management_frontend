@@ -64,13 +64,13 @@ export function Topbar({ onOpenMobile, title }: TopbarProps) {
   ];
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between border-b border-slate-200/80 bg-white/85 px-4 sm:px-6 lg:px-8 backdrop-blur-md transition-all">
+    <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between border-b border-slate-200/80 dark:border-slate-800/80 bg-white/85 dark:bg-slate-900/85 px-4 sm:px-6 lg:px-8 backdrop-blur-md transition-colors">
       {/* Left: Mobile Nav Button + Dynamic Page Title */}
       <div className="flex items-center gap-3 sm:gap-4">
         <button
           type="button"
           onClick={onOpenMobile}
-          className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-600 lg:hidden cursor-pointer"
+          className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-600 lg:hidden cursor-pointer"
           aria-label="Open mobile navigation"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -79,10 +79,10 @@ export function Topbar({ onOpenMobile, title }: TopbarProps) {
         </button>
 
         <div className="flex items-center gap-2.5">
-          <h1 className="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900">
+          <h1 className="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">
             {getPageTitle()}
           </h1>
-          <span className="hidden md:inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-bold text-indigo-700 border border-indigo-100">
+          <span className="hidden md:inline-flex items-center gap-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 text-[10px] font-bold text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800/60">
             <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-pulse" />
             Live Sync
           </span>
@@ -92,7 +92,7 @@ export function Topbar({ onOpenMobile, title }: TopbarProps) {
       {/* Middle: Sleek Search Bar with Keyboard Shortcut */}
       <div className="hidden md:flex flex-1 max-w-md mx-6">
         <div className="relative w-full">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 dark:text-slate-500">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
@@ -100,32 +100,34 @@ export function Topbar({ onOpenMobile, title }: TopbarProps) {
           <input
             type="text"
             placeholder="Search patients, medical records, doctors..."
-            className="w-full rounded-xl border border-slate-200/90 bg-slate-50/70 py-1.5 pl-9 pr-12 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-all shadow-2xs"
+            className="w-full rounded-xl border border-slate-200/90 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/70 py-1.5 pl-9 pr-12 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900/40 transition-all shadow-2xs"
           />
           <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5">
-            <kbd className="hidden sm:inline-block rounded border border-slate-200 bg-white px-1.5 text-[10px] font-semibold text-slate-400 shadow-2xs">
+            <kbd className="hidden sm:inline-block rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-1.5 text-[10px] font-semibold text-slate-400 dark:text-slate-500 shadow-2xs">
               ⌘K
             </kbd>
           </div>
         </div>
       </div>
 
-      {/* Right Controls: Live Clock, Notifications, Profile Pill & Sign Out */}
-      <div className="flex items-center gap-3">
+      {/* Right Controls: Live Clock, Theme Toggle, Notifications, Profile Pill & Sign Out */}
+      <div className="flex items-center gap-2.5 sm:gap-3">
         {/* Live Clock */}
         {currentTime && (
-          <div className="hidden xl:flex items-center gap-1.5 rounded-xl border border-slate-200/80 bg-slate-50/60 px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-2xs">
+          <div className="hidden xl:flex items-center gap-1.5 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60 px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 shadow-2xs">
             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse-emerald" />
             <span>{currentTime}</span>
           </div>
         )}
+
+        {/* Theme toggle omitted as requested */}
 
         {/* Interactive Notifications Bell */}
         <div className="relative">
           <button
             type="button"
             onClick={() => setShowNotifications(!showNotifications)}
-            className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200/80 bg-white text-slate-600 hover:bg-slate-50 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all cursor-pointer shadow-2xs"
+            className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200/80 dark:border-slate-700/80 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all cursor-pointer shadow-2xs"
             aria-label="View alerts"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.9}>
@@ -138,10 +140,10 @@ export function Topbar({ onOpenMobile, title }: TopbarProps) {
 
           {/* Notifications Dropdown Modal */}
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl z-50 animate-fade-in">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-2 mb-2">
-                <span className="text-xs font-bold text-slate-900">Hospital Alerts</span>
-                <span className="text-[10px] font-semibold text-indigo-600 hover:underline cursor-pointer">
+            <div className="absolute right-0 mt-2 w-80 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 shadow-xl z-50 animate-fade-in">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2 mb-2">
+                <span className="text-xs font-bold text-slate-900 dark:text-white">Hospital Alerts</span>
+                <span className="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer">
                   Mark all read
                 </span>
               </div>
@@ -149,7 +151,7 @@ export function Topbar({ onOpenMobile, title }: TopbarProps) {
                 {mockAlerts.map((alert) => (
                   <div
                     key={alert.id}
-                    className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer"
+                    className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors cursor-pointer"
                   >
                     <span
                       className={`mt-1 h-2 w-2 rounded-full shrink-0 ${
@@ -161,7 +163,7 @@ export function Topbar({ onOpenMobile, title }: TopbarProps) {
                       }`}
                     />
                     <div className="flex-1">
-                      <p className="text-xs font-semibold text-slate-800 leading-tight">
+                      <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 leading-tight">
                         {alert.title}
                       </p>
                       <span className="text-[10px] text-slate-400">{alert.time}</span>
@@ -176,30 +178,30 @@ export function Topbar({ onOpenMobile, title }: TopbarProps) {
         {/* Admin Profile Pill */}
         <div className="flex items-center gap-2.5 pl-1">
           <div className="hidden sm:block text-right">
-            <p className="text-xs font-bold text-slate-900 capitalize leading-tight">
+            <p className="text-xs font-bold text-slate-900 dark:text-white capitalize leading-tight">
               {adminName}
             </p>
-            <p className="text-[10px] text-emerald-600 font-semibold leading-tight flex items-center justify-end gap-1">
+            <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold leading-tight flex items-center justify-end gap-1">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
               Online
             </p>
           </div>
 
           <div
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-600 to-blue-600 text-white font-extrabold text-xs shadow-md shadow-indigo-600/20 ring-2 ring-indigo-100 shrink-0"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-600 to-blue-600 text-white font-extrabold text-xs shadow-md shadow-indigo-600/20 ring-2 ring-indigo-100 dark:ring-indigo-900/50 shrink-0"
             title={adminName}
           >
             {initial}
           </div>
         </div>
 
-        <div className="h-6 w-px bg-slate-200 hidden sm:block" />
+        <div className="h-6 w-px bg-slate-200 dark:bg-slate-800 hidden sm:block" />
 
         {/* Sign Out Button */}
         <button
           type="button"
           onClick={handleLogout}
-          className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/80 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all cursor-pointer shadow-2xs"
+          className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/80 dark:border-slate-700/80 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 dark:hover:border-rose-800/60 transition-all cursor-pointer shadow-2xs"
           title="Sign out of administration"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
